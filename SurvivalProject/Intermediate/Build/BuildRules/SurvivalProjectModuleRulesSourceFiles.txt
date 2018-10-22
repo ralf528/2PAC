@@ -1,0 +1,3 @@
+D:\Epic Games\2PAC\SurvivalProject\Source\SurvivalProject\SurvivalProject.Build.cs
+D:\Epic Games\2PAC\SurvivalProject\Source\SurvivalProject.Target.cs
+D:\Epic Games\2PAC\SurvivalProject\Source\SurvivalProjectEditor.Target.cs

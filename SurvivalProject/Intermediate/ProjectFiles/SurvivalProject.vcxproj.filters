@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<None Include="..\..\SurvivalProject.uproject" />
+		<Filter Include="Source">
+			<UniqueIdentifier>{4B1689BB-1FBB-4C5D-B434-3BC4E1C7B29D}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Source\SurvivalProject.Target.cs">
+			<Filter>Source</Filter>
+		</None >
+		<None Include="..\..\Source\SurvivalProjectEditor.Target.cs">
+			<Filter>Source</Filter>
+		</None >
+		<Filter Include="Config">
+			<UniqueIdentifier>{9CAC4A09-DAF2-4183-9A54-DCE120A7DB32}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Config\DefaultEditor.ini">
+			<Filter>Config</Filter>
+		</None >
+		<None Include="..\..\Config\DefaultEditorPerProjectUserSettings.ini">
+			<Filter>Config</Filter>
+		</None >
+		<None Include="..\..\Config\DefaultEngine.ini">
+			<Filter>Config</Filter>
+		</None >
+		<None Include="..\..\Config\DefaultGame.ini">
+			<Filter>Config</Filter>
+		</None >
+		<None Include="..\..\Config\DefaultInput.ini">
+			<Filter>Config</Filter>
+		</None >
+		<Filter Include="Source\SurvivalProject">
+			<UniqueIdentifier>{A43DE115-DB75-48FF-9142-1A74113E94AC}</UniqueIdentifier>
+		</Filter>
+		<ClCompile Include="..\..\Source\SurvivalProject\MyActor.cpp">
+			<Filter>Source\SurvivalProject</Filter>
+		</ClCompile >
+		<ClInclude Include="..\..\Source\SurvivalProject\MyActor.h">
+			<Filter>Source\SurvivalProject</Filter>
+		</ClInclude >
+		<None Include="..\..\Source\SurvivalProject\SurvivalProject.Build.cs">
+			<Filter>Source\SurvivalProject</Filter>
+		</None >
+		<ClCompile Include="..\..\Source\SurvivalProject\SurvivalProject.cpp">
+			<Filter>Source\SurvivalProject</Filter>
+		</ClCompile >
+		<ClInclude Include="..\..\Source\SurvivalProject\SurvivalProject.h">
+			<Filter>Source\SurvivalProject</Filter>
+		</ClInclude >
+	</ItemGroup>
+</Project>
