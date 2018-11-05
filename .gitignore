@@ -52,12 +52,14 @@ SourceArt/**/*.tga
 Binaries/*
 SurvivalProject/Binaries
 SurvivalProject/Binaries/*
+trunk/SurvivalProjectCPP/Binaries
 Plugins/*/Binaries/*
 
 # Builds
 Build/*
 SurvivalProject/Build
 SurvivalProject/Build/*
+trunk/SurvivalProjectCPP/Build
 
 # Whitelist PakBlacklist-<BuildConfiguration>.txt files
 !Build/*/
@@ -74,11 +76,13 @@ Build/*/**
 Saved/*
 SurvivalProject/Saved
 SurvivalProject/Saved/*
+trunk/SurvivalProjectCPP/Saved
 
 # Compiled source files for the engine to use
 Intermediate/*
 SurvivalProject/Intermediate
 SurvivalProject/Intermediate/*
+trunk/SurvivalProjectCPP/Intermediate
 Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
