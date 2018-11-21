@@ -17,12 +17,22 @@ public:
 	// Called every frame.
 	virtual void Tick(float DeltaSeconds) override;
 
+    /** Allows a Pawn to set up custom input bindings. Called upon possession by a PlayerController, using the InputComponent created by CreatePlayerInputComponent(). */
+    virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns CursorToWorld subobject **/
 	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
+
+    //< 아이템 사용
+    void InputUseItemKey01();
+    void InputUseItemKey02();
+    void InputUseItemKey03();
+    void InputUseItemKey04();
+    bool UseItemForIndex(const int index);
 
 private:
 	/** Top down camera */
@@ -36,5 +46,7 @@ private:
 	/** A decal that projects to the cursor location. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UDecalComponent* CursorToWorld;
+
+    TMap<int, int> m_inventory;
 };
 

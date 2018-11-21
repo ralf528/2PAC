@@ -55,6 +55,12 @@ ASurvivalProjectCPPCharacter::ASurvivalProjectCPPCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+    //< 인벤토리 셋팅
+    m_inventory.Add(1, 1);
+    m_inventory.Add(2, 2);
+    m_inventory.Add(3, 3);
+    m_inventory.Add(4, 4);
 }
 
 void ASurvivalProjectCPPCharacter::Tick(float DeltaSeconds)
@@ -87,4 +93,49 @@ void ASurvivalProjectCPPCharacter::Tick(float DeltaSeconds)
 			CursorToWorld->SetWorldRotation(CursorR);
 		}
 	}
+}
+
+void ASurvivalProjectCPPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+    Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+    PlayerInputComponent->BindAction("UseItem_01", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputUseItemKey01);
+    PlayerInputComponent->BindAction("UseItem_02", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputUseItemKey02);
+    PlayerInputComponent->BindAction("UseItem_03", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputUseItemKey03);
+    PlayerInputComponent->BindAction("UseItem_04", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputUseItemKey04);
+}
+
+void ASurvivalProjectCPPCharacter::InputUseItemKey01()
+{
+    UseItemForIndex(0);
+}
+
+void ASurvivalProjectCPPCharacter::InputUseItemKey02()
+{
+    UseItemForIndex(1);
+}
+
+void ASurvivalProjectCPPCharacter::InputUseItemKey03()
+{
+    UseItemForIndex(2);
+}
+
+void ASurvivalProjectCPPCharacter::InputUseItemKey04()
+{
+    UseItemForIndex(3);
+}
+
+bool ASurvivalProjectCPPCharacter::UseItemForIndex(const int index)
+{
+    UE_LOG(LogClass, Log, TEXT("[Log]UseItem %d"), index);
+
+    //< 인벤토리
+    /*if (index >= m_inventory.Num()) {
+        return false;
+    }
+
+    int value = m_inventory[index];
+    m_inventory[index]--;*/
+
+    return true;
 }
