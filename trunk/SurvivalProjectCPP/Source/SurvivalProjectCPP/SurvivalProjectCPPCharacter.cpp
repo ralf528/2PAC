@@ -55,6 +55,12 @@ ASurvivalProjectCPPCharacter::ASurvivalProjectCPPCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+    // Data Table
+    //FItemStruct* row = m_DataTable->FindRow<FItemStruct>(TEXT("1"), TEXT(""));
+    /*if (row) {
+    UE_LOG(LogClass, Log, TEXT("[Log]Item Row %d"), row->ItemType);
+    }*/
 }
 
 void ASurvivalProjectCPPCharacter::Tick(float DeltaSeconds)

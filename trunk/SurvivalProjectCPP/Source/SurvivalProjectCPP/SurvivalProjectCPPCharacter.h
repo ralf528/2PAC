@@ -4,7 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Engine/DataTable.h"
 #include "SurvivalProjectCPPCharacter.generated.h"
+
+USTRUCT()
+struct FItemStruct : public FTableRowBase
+{
+    GENERATED_USTRUCT_BODY()
+
+    UPROPERTY()
+    int ItemType;
+};
 
 UCLASS(Blueprintable)
 class ASurvivalProjectCPPCharacter : public ACharacter
@@ -54,5 +64,8 @@ private:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MyUnit", meta = (AllowPrivateAccess = "true"))
     TMap<int, int> m_inventory;
+
+    UPROPERTY(EditAnywhere)
+    UDataTable* m_DataTable;
 };
 
