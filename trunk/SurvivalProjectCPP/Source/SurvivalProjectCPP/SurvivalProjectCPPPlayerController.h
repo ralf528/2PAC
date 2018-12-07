@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "SurvivalProjectCPPPlayerController.generated.h"
 
+class AIO_Base;
+
 UCLASS()
 class ASurvivalProjectCPPPlayerController : public APlayerController
 {
@@ -38,6 +40,18 @@ protected:
 	/** Input handlers for SetDestination action. */
 	void OnSetDestinationPressed();
 	void OnSetDestinationReleased();
+
+    /** Navigate player to the current mouse cursor location. */
+    void CheckInteractionObject();
+
+private:
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MyUnit", meta = (AllowPrivateAccess = "true"))
+    bool m_bInteracting;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MyUnit", meta = (AllowPrivateAccess = "true"))
+    float m_InteractionTime;
+
+    AIO_Base* m_InteractionItem;
 };
 
 

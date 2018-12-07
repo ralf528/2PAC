@@ -6,11 +6,15 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "SurvivalProjectCPPCharacter.h"
 #include "Engine/World.h"
+#include "IO_Base.h"
 
 ASurvivalProjectCPPPlayerController::ASurvivalProjectCPPPlayerController()
 {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
+    m_bInteracting = false;
+    m_InteractionTime = 0.f;
+    m_InteractionItem = nullptr;
 }
 
 void ASurvivalProjectCPPPlayerController::PlayerTick(float DeltaTime)
@@ -22,6 +26,20 @@ void ASurvivalProjectCPPPlayerController::PlayerTick(float DeltaTime)
 	{
 		MoveToMouseCursor();
 	}
+
+    // interaction
+    if (m_bInteracting) {
+        m_InteractionTime += DeltaTime*100.f;
+        if (m_InteractionTime > 100.f) {
+            m_bInteracting = false;
+            m_InteractionTime = 0.f;
+            if (m_InteractionItem) {
+                m_InteractionItem->Destroy();
+                m_InteractionItem = nullptr;
+            }
+            UE_LOG(LogClass, Log, TEXT("[Log]Interaction End"));
+        }
+    }
 }
 
 void ASurvivalProjectCPPPlayerController::SetupInputComponent()
@@ -37,6 +55,9 @@ void ASurvivalProjectCPPPlayerController::SetupInputComponent()
 	InputComponent->BindTouch(EInputEvent::IE_Repeat, this, &ASurvivalProjectCPPPlayerController::MoveToTouchLocation);
 
 	InputComponent->BindAction("ResetVR", IE_Pressed, this, &ASurvivalProjectCPPPlayerController::OnResetVR);
+
+    // set interaction bindings
+    InputComponent->BindAction("SetInteraction", IE_Pressed, this, &ASurvivalProjectCPPPlayerController::CheckInteractionObject);
 }
 
 void ASurvivalProjectCPPPlayerController::OnResetVR()
@@ -103,10 +124,43 @@ void ASurvivalProjectCPPPlayerController::OnSetDestinationPressed()
 {
 	// set flag to keep updating destination until released
 	bMoveToMouseCursor = true;
+    m_bInteracting = false;
+    m_InteractionTime = 0.f;
 }
 
 void ASurvivalProjectCPPPlayerController::OnSetDestinationReleased()
 {
 	// clear flag to indicate we should stop updating the destination
 	bMoveToMouseCursor = false;
+}
+
+void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
+{
+    UE_LOG(LogClass, Log, TEXT("[Log]Check IO"));
+    // Trace to see what is under the mouse cursor
+    FHitResult Hit;
+    GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+
+    if (Hit.bBlockingHit)
+    {
+        // We hit something, move there
+        //SetNewMoveDestination(Hit.ImpactPoint);
+        AActor* hitActor = Hit.GetActor();
+        
+        if (hitActor) {
+            UE_LOG(LogClass, Log, TEXT("[Log]Is Actor:%s"), *hitActor->GetName());
+
+            AIO_Base* comp = dynamic_cast<AIO_Base*>(hitActor);
+            if (comp) {
+                UE_LOG(LogClass, Log, TEXT("[Log]Is IOBaseComponent"));
+                m_bInteracting = true;
+                m_InteractionItem = comp;
+            }
+
+            bool bIO = hitActor->ActorHasTag("IO_Base");
+            if (bIO) {
+                UE_LOG(LogClass, Log, TEXT("[Log]Is IO"));
+            }
+        }
+    }
 }
