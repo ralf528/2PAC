@@ -150,6 +150,17 @@ void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
         if (hitActor) {
             UE_LOG(LogClass, Log, TEXT("[Log]Is Actor:%s"), *hitActor->GetName());
 
+            APawn* myPawn = GetPawn();
+            if (!myPawn) {
+                UE_LOG(LogClass, Log, TEXT("[Log]myPawn is nullptr"));
+                return;
+            }
+            float distance = FMath::Abs(FVector::Dist(myPawn->GetActorLocation(), hitActor->GetActorLocation()));
+            UE_LOG(LogClass, Log, TEXT("[Log]distance : %f"), distance);
+            if (distance > 150.f) {
+                return;
+            }
+
             AIO_Base* comp = dynamic_cast<AIO_Base*>(hitActor);
             if (comp) {
                 UE_LOG(LogClass, Log, TEXT("[Log]Is IOBaseComponent"));
@@ -157,10 +168,10 @@ void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
                 m_InteractionItem = comp;
             }
 
-            bool bIO = hitActor->ActorHasTag("IO_Base");
+            /*bool bIO = hitActor->ActorHasTag("IO_Base");
             if (bIO) {
                 UE_LOG(LogClass, Log, TEXT("[Log]Is IO"));
-            }
+            }*/
         }
     }
 }
