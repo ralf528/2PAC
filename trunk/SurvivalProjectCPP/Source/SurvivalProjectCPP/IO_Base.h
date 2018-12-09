@@ -23,6 +23,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+public:
+    int GetInteractionType() { return m_type; }
 	
-	
+private:
+    //UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    int m_type;
 };
