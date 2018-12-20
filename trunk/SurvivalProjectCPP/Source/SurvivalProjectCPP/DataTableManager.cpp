@@ -8,6 +8,35 @@ ADataTableManager::ADataTableManager()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+bool ADataTableManager::LoadDataTable()
+{
+    LoadItemTable();
+
+    return true;
+}
+
+bool ADataTableManager::LoadItemTable()
+{
+    if (!m_ItemTable) {
+        UE_LOG(LogClass, Log, TEXT("[Log]Failed to load table : ItemTable"));
+        return false;
+    }
+
+    FString ContextString;
+    TArray<FName> RowNames = m_ItemTable->GetRowNames();
+
+    int i = 0;
+    for (auto &name : RowNames) {
+        FTD_Item* item = m_ItemTable->FindRow<FTD_Item>(name, ContextString);
+        if (item) {
+            m_mapItems.Add(i, *item);
+            UE_LOG(LogClass, Log, TEXT("[Log]Item : %d, %s"), item->ItemType, *item->Name.ToString());
+        }
+    }
+
+    return true;
+}
+
 // Called when the game starts or when spawned
 void ADataTableManager::BeginPlay()
 {
@@ -21,14 +50,47 @@ void ADataTableManager::Tick(float DeltaTime)
 }
 
 // 아이템 테이블의 데이터를 반환
-FTD_Item* ADataTableManager::GetItemData(int index)
+FTD_Item& ADataTableManager::GetItemData(int index)
 {
-    FString strIndex = FString::FromInt(index);
-    FTD_Item* row = m_ItemTable->FindRow<FTD_Item>(*strIndex, strIndex);
-    if (row) {
-        UE_LOG(LogClass, Log, TEXT("[Log]Item Row %d, %s"), row->ItemType, *row->Name.ToString());
-        return row;
+    FTD_Item tmp;
+    tmp.ItemType = 0;
+    if (!m_ItemTable) {
+        //return nullptr;
+        UE_LOG(LogClass, Log, TEXT("[Log]ItemTable is nullptr"));
+        return tmp;
     }
 
-    return nullptr;
+    FString ContextString;
+    FString strIndex = FString::FromInt(index);
+    FName name = *strIndex;
+    FTD_Item* row = m_ItemTable->FindRow<FTD_Item>(name, ContextString);
+    if (row) {
+        UE_LOG(LogClass, Log, TEXT("[Log]Item Row %d, %s"), row->ItemType, *row->Name.ToString());
+        return *row;
+    }
+
+    //return nullptr;
+    UE_LOG(LogClass, Log, TEXT("[Log]failed to return ItemData"));
+    return tmp;
+}
+
+// 아이템 조합 테이블 데이터 반환
+FTD_CombineItem& ADataTableManager::GetCombineItemData(int index)
+{
+    FTD_CombineItem tmp;
+
+    if (!m_CombineItemTable) {
+        //return nullptr;
+        return tmp;
+    }
+
+    FString strIndex = FString::FromInt(index);
+    FTD_CombineItem* row = m_CombineItemTable->FindRow<FTD_CombineItem>(*strIndex, strIndex);
+    if (row) {
+        //UE_LOG(LogClass, Log, TEXT("[Log]CombineItem Row %d = %d + %d"), row->ResultItemType, row->MaterialItemType1, row->MaterialItemType2);
+        return *row;
+    }
+
+    //return nullptr;
+    return tmp;
 }

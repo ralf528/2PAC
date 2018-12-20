@@ -16,4 +16,6 @@ ASurvivalProjectCPPGameMode::ASurvivalProjectCPPGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+    m_dataTableManager = nullptr;
 }
