@@ -65,7 +65,7 @@ FTD_Item& ADataTableManager::GetItemData(int index)
     FName name = *strIndex;
     FTD_Item* row = m_ItemTable->FindRow<FTD_Item>(name, ContextString);
     if (row) {
-        UE_LOG(LogClass, Log, TEXT("[Log]Item Row %d, %s"), row->ItemType, *row->Name.ToString());
+        //UE_LOG(LogClass, Log, TEXT("[Log]Item Row %d, %s"), row->ItemType, *row->Name.ToString());
         return *row;
     }
 

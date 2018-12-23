@@ -141,7 +141,6 @@ void ASurvivalProjectCPPPlayerController::OnSetDestinationReleased()
 
 void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
 {
-    UE_LOG(LogClass, Log, TEXT("[Log]Check IO"));
     // Trace to see what is under the mouse cursor
     FHitResult Hit;
     GetHitResultUnderCursor(ECC_Visibility, false, Hit);
@@ -172,6 +171,35 @@ void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
                 m_bInteracting = true;
                 m_InteractionItem = comp;
             }
+
+            FVector pawn = myPawn->GetActorLocation();
+            FVector item = hitActor->GetActorLocation();
+
+            FVector dir = item - pawn;
+            FVector forward = myPawn->GetActorForwardVector();
+            FVector up = myPawn->GetActorUpVector();
+            dir.Normalize();
+            forward.Normalize();
+            up.Normalize();
+
+            float dot = FVector::DotProduct(forward, dir);
+
+            FVector cross = FVector::CrossProduct(forward, dir);
+            float cross_dot = FVector::DotProduct(cross, up);
+
+            float angle = acos(dot);
+            FRotator frot;
+
+            UE_LOG(LogClass, Log, TEXT("[Log]dot, %f"), cross_dot);
+
+            if (cross_dot > 0) {
+                frot.Yaw = FMath::RadiansToDegrees(angle);
+            }
+            else {
+                frot.Yaw = FMath::RadiansToDegrees(-angle);
+            }
+            //myPawn->SetActorRotation(quat);
+            myPawn->AddActorLocalRotation(frot);
 
             /*bool bIO = hitActor->ActorHasTag("IO_Base");
             if (bIO) {
