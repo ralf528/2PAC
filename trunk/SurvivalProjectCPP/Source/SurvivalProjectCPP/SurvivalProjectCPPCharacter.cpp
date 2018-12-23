@@ -1,6 +1,7 @@
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 #include "SurvivalProjectCPPCharacter.h"
+#include "SurvivalProjectCPPGameMode.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
@@ -123,35 +124,84 @@ void ASurvivalProjectCPPCharacter::AddItemToInventory(int itemType)
 
 void ASurvivalProjectCPPCharacter::InputUseItemKey01()
 {
-    UseItemForIndex(0);
+    UseItemForIndex(1);
 }
 
 void ASurvivalProjectCPPCharacter::InputUseItemKey02()
 {
-    UseItemForIndex(1);
+    UseItemForIndex(2);
 }
 
 void ASurvivalProjectCPPCharacter::InputUseItemKey03()
 {
-    UseItemForIndex(2);
+    UseItemForIndex(3);
 }
 
 void ASurvivalProjectCPPCharacter::InputUseItemKey04()
 {
-    UseItemForIndex(3);
+    UseItemForIndex(4);
 }
 
 bool ASurvivalProjectCPPCharacter::UseItemForIndex(const int index)
 {
-    UE_LOG(LogClass, Log, TEXT("[Log]UseItem %d"), index);
-
     //< 인벤토리
-    /*if (index >= m_inventory.Num()) {
+    if (index >= m_inventory.Num()) {
         return false;
     }
 
-    int value = m_inventory[index];
-    m_inventory[index]--;*/
+    /*if (m_inventory.Find(index) == nullptr) {
+        return false;
+    }*/
+
+    if (!ExistItem(index)) {
+        return false;
+    }
+
+    int value = DeleteItem(index);
+    UE_LOG(LogClass, Log, TEXT("[Log]UseItem index : %d, count : %d"), index, value);
+
+    return true;
+}
+
+bool ASurvivalProjectCPPCharacter::ExistItem(int index)
+{
+    if (m_inventory[index] <= 0) {
+        return false;
+    }
+
+    return true;
+}
+
+int ASurvivalProjectCPPCharacter::DeleteItem(int index, int count)
+{
+    int remain = m_inventory[index] - count;
+    m_inventory[index] = (remain < 0) ? 0 : remain;
+
+    return m_inventory[index];
+}
+
+bool ASurvivalProjectCPPCharacter::CombineItem(const int index)
+{
+    ASurvivalProjectCPPGameMode* mode = Cast<ASurvivalProjectCPPGameMode>(GetWorld()->GetAuthGameMode());
+    if (!mode) {
+        return false;
+    }
+
+    ADataTableManager* table = mode->GetDataTableManager();
+    if (!table) {
+        return false;
+    }
+
+    FTD_CombineItem& data = table->GetCombineItemData(index);
+
+    if (!ExistItem(data.MaterialItemType1) || !ExistItem(data.MaterialItemType2)) {
+        UE_LOG(LogClass, Log, TEXT("[Log]not enough Combine Material : %d, %d"), data.MaterialItemType1, data.MaterialItemType2);
+        return false;
+    }
+
+    DeleteItem(data.MaterialItemType1);
+    DeleteItem(data.MaterialItemType2);
+    AddItemToInventory(data.ResultItemType);
 
     return true;
 }

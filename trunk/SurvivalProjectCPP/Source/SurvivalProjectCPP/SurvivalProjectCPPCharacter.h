@@ -33,11 +33,19 @@ public:
     void AddItemToInventory(int itemType);
 
     //< 아이템 사용
+    UFUNCTION(BlueprintCallable, Category = "MyUnit")
+    bool UseItemForIndex(const int index);
+
+    bool ExistItem(int index);
+    int DeleteItem(int index, int count = 1);
+
     void InputUseItemKey01();
     void InputUseItemKey02();
     void InputUseItemKey03();
     void InputUseItemKey04();
-    bool UseItemForIndex(const int index);
+
+    UFUNCTION(BlueprintCallable, Category = "MyUnit")
+    bool CombineItem(const int index);
 
 private:
 	/** Top down camera */
