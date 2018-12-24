@@ -6,15 +6,13 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "SurvivalProjectCPPCharacter.h"
 #include "Engine/World.h"
-#include "IO_Base.h"
 
 ASurvivalProjectCPPPlayerController::ASurvivalProjectCPPPlayerController()
 {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
-    m_bInteracting = false;
     m_InteractionTime = 0.f;
-    m_InteractionItem = nullptr;
+    m_Interactor.Reset();
 }
 
 void ASurvivalProjectCPPPlayerController::PlayerTick(float DeltaTime)
@@ -28,20 +26,11 @@ void ASurvivalProjectCPPPlayerController::PlayerTick(float DeltaTime)
 	}
 
     // interaction
-    if (m_bInteracting) {
-        m_InteractionTime += DeltaTime*100.f;
+    if (m_Interactor.IsInteracting()) {
+        m_InteractionTime += DeltaTime * 100.f;
         if (m_InteractionTime > 100.f) {
-            m_bInteracting = false;
             m_InteractionTime = 0.f;
-            if (m_InteractionItem) {
-                ASurvivalProjectCPPCharacter* character = dynamic_cast<ASurvivalProjectCPPCharacter*>(GetPawn());
-                if (character) {
-                    character->AddItemToInventory(m_InteractionItem->GetInteractionType());
-                }
-
-                m_InteractionItem->Destroy();
-                m_InteractionItem = nullptr;
-            }
+            m_Interactor.Complete();
             UE_LOG(LogClass, Log, TEXT("[Log]Interaction End"));
         }
     }
@@ -129,7 +118,7 @@ void ASurvivalProjectCPPPlayerController::OnSetDestinationPressed()
 {
 	// set flag to keep updating destination until released
 	bMoveToMouseCursor = true;
-    m_bInteracting = false;
+    m_Interactor.Reset();
     m_InteractionTime = 0.f;
 }
 
@@ -141,14 +130,13 @@ void ASurvivalProjectCPPPlayerController::OnSetDestinationReleased()
 
 void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
 {
-    // Trace to see what is under the mouse cursor
+    static const float interactionDistance = 200.f;
+
     FHitResult Hit;
     GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
     if (Hit.bBlockingHit)
     {
-        // We hit something, move there
-        //SetNewMoveDestination(Hit.ImpactPoint);
         AActor* hitActor = Hit.GetActor();
         
         if (hitActor) {
@@ -162,14 +150,15 @@ void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
 
             float distance = FMath::Abs(FVector::Dist(myPawn->GetActorLocation(), hitActor->GetActorLocation()));
             UE_LOG(LogClass, Log, TEXT("[Log]distance : %f"), distance);
-            if (distance > 150.f) {
+            if (distance > interactionDistance) {
                 return;
             }
 
             AIO_Base* comp = dynamic_cast<AIO_Base*>(hitActor);
             if (comp) {
-                m_bInteracting = true;
-                m_InteractionItem = comp;
+                ASurvivalProjectCPPCharacter* character = dynamic_cast<ASurvivalProjectCPPCharacter*>(GetPawn());
+                comp->SetCharacter(character);
+                m_Interactor.Start(comp);
             }
 
             FVector pawn = myPawn->GetActorLocation();

@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "IO_Base.h"
+#include "ExternHeader.h"
 #include "SurvivalProjectCPPPlayerController.generated.h"
 
 class AIO_Base;
@@ -44,14 +46,20 @@ protected:
     /** Navigate player to the current mouse cursor location. */
     void CheckInteractionObject();
 
+    // interaction
+    UFUNCTION(BlueprintCallable)
+    bool IsInteracting() { return m_Interactor.IsInteracting(); }
+
 private:
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MyUnit", meta = (AllowPrivateAccess = "true"))
-    bool m_bInteracting;
+    /*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MyUnit", meta = (AllowPrivateAccess = "true"))
+    bool m_bInteracting;*/
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MyUnit", meta = (AllowPrivateAccess = "true"))
     float m_InteractionTime;
 
-    AIO_Base* m_InteractionItem;
+    CastingTimer m_CastTimer;
+
+    FInteractor m_Interactor;
 };
 
 

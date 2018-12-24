@@ -4,7 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "SurvivalProjectCPPCharacter.h"
 #include "IO_Base.generated.h"
+
+USTRUCT()
+struct FInteraction
+{
+    GENERATED_USTRUCT_BODY()
+
+public:
+    int Type;
+    int Animation;
+    float castingTime;
+};
 
 UCLASS()
 class SURVIVALPROJECTCPP_API AIO_Base : public AActor
@@ -24,9 +36,49 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
-    int GetInteractionType() { return m_type; }
+    FInteraction GetInfo() { return info; }
+    int GetInteractionType() { return info.Type; }
+
+    void Execute();
+
+    void SetCharacter(ASurvivalProjectCPPCharacter* character) { this->character = character; }
 	
 private:
-    //UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-    int m_type;
+    UPROPERTY(EditAnywhere, Blueprintable, Category = "Interaction")
+    int type;
+
+    FInteraction info;
+
+    ASurvivalProjectCPPCharacter* character;
+};
+
+USTRUCT()
+struct FInteractor
+{
+    GENERATED_USTRUCT_BODY()
+
+public:
+    FInteractor() : _object(nullptr) {}
+
+    void Reset() { _object = nullptr; }
+
+    void Start(AIO_Base* obj)
+    {
+        _object = obj;
+    }
+
+    void Complete()
+    {
+        if (_object) {
+            _object->Execute();
+        }
+        Reset();
+    }
+
+    AIO_Base* GetObject() { return _object; }
+
+    bool IsInteracting() { return (_object != nullptr); }
+
+private:
+    AIO_Base* _object;
 };
