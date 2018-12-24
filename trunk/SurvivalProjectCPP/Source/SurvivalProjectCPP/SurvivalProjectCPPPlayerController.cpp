@@ -5,25 +5,26 @@
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "SurvivalProjectCPPCharacter.h"
+#include "LogManager.h"
 #include "Engine/World.h"
 
 ASurvivalProjectCPPPlayerController::ASurvivalProjectCPPPlayerController()
 {
-	bShowMouseCursor = true;
-	DefaultMouseCursor = EMouseCursor::Crosshairs;
+    bShowMouseCursor = true;
+    DefaultMouseCursor = EMouseCursor::Crosshairs;
     m_InteractionTime = 0.f;
     m_Interactor.Reset();
 }
 
 void ASurvivalProjectCPPPlayerController::PlayerTick(float DeltaTime)
 {
-	Super::PlayerTick(DeltaTime);
+    Super::PlayerTick(DeltaTime);
 
-	// keep updating the destination every tick while desired
-	if (bMoveToMouseCursor)
-	{
-		MoveToMouseCursor();
-	}
+    // keep updating the destination every tick while desired
+    if (bMoveToMouseCursor)
+    {
+        MoveToMouseCursor();
+    }
 
     // interaction
     if (m_Interactor.IsInteracting()) {
@@ -31,24 +32,24 @@ void ASurvivalProjectCPPPlayerController::PlayerTick(float DeltaTime)
         if (m_InteractionTime > 100.f) {
             m_InteractionTime = 0.f;
             m_Interactor.Complete();
-            UE_LOG(LogClass, Log, TEXT("[Log]Interaction End"));
+            ALogManager::Log(TEXT("[Log]Interaction End"));
         }
     }
 }
 
 void ASurvivalProjectCPPPlayerController::SetupInputComponent()
 {
-	// set up gameplay key bindings
-	Super::SetupInputComponent();
+    // set up gameplay key bindings
+    Super::SetupInputComponent();
 
-	InputComponent->BindAction("SetDestination", IE_Pressed, this, &ASurvivalProjectCPPPlayerController::OnSetDestinationPressed);
-	InputComponent->BindAction("SetDestination", IE_Released, this, &ASurvivalProjectCPPPlayerController::OnSetDestinationReleased);
+    InputComponent->BindAction("SetDestination", IE_Pressed, this, &ASurvivalProjectCPPPlayerController::OnSetDestinationPressed);
+    InputComponent->BindAction("SetDestination", IE_Released, this, &ASurvivalProjectCPPPlayerController::OnSetDestinationReleased);
 
-	// support touch devices 
-	InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &ASurvivalProjectCPPPlayerController::MoveToTouchLocation);
-	InputComponent->BindTouch(EInputEvent::IE_Repeat, this, &ASurvivalProjectCPPPlayerController::MoveToTouchLocation);
+    // support touch devices
+    InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &ASurvivalProjectCPPPlayerController::MoveToTouchLocation);
+    InputComponent->BindTouch(EInputEvent::IE_Repeat, this, &ASurvivalProjectCPPPlayerController::MoveToTouchLocation);
 
-	InputComponent->BindAction("ResetVR", IE_Pressed, this, &ASurvivalProjectCPPPlayerController::OnResetVR);
+    InputComponent->BindAction("ResetVR", IE_Pressed, this, &ASurvivalProjectCPPPlayerController::OnResetVR);
 
     // set interaction bindings
     InputComponent->BindAction("SetInteraction", IE_Pressed, this, &ASurvivalProjectCPPPlayerController::CheckInteractionObject);
@@ -56,76 +57,76 @@ void ASurvivalProjectCPPPlayerController::SetupInputComponent()
 
 void ASurvivalProjectCPPPlayerController::OnResetVR()
 {
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
+    UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
 }
 
 void ASurvivalProjectCPPPlayerController::MoveToMouseCursor()
 {
-	if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled())
-	{
-		if (ASurvivalProjectCPPCharacter* MyPawn = Cast<ASurvivalProjectCPPCharacter>(GetPawn()))
-		{
-			if (MyPawn->GetCursorToWorld())
-			{
-				UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, MyPawn->GetCursorToWorld()->GetComponentLocation());
-			}
-		}
-	}
-	else
-	{
-		// Trace to see what is under the mouse cursor
-		FHitResult Hit;
-		GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+    if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled())
+    {
+        if (ASurvivalProjectCPPCharacter* MyPawn = Cast<ASurvivalProjectCPPCharacter>(GetPawn()))
+        {
+            if (MyPawn->GetCursorToWorld())
+            {
+                UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, MyPawn->GetCursorToWorld()->GetComponentLocation());
+            }
+        }
+    }
+    else
+    {
+        // Trace to see what is under the mouse cursor
+        FHitResult Hit;
+        GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
-		if (Hit.bBlockingHit)
-		{
-			// We hit something, move there
-			SetNewMoveDestination(Hit.ImpactPoint);
-		}
-	}
+        if (Hit.bBlockingHit)
+        {
+            // We hit something, move there
+            SetNewMoveDestination(Hit.ImpactPoint);
+        }
+    }
 }
 
 void ASurvivalProjectCPPPlayerController::MoveToTouchLocation(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
-	FVector2D ScreenSpaceLocation(Location);
+    FVector2D ScreenSpaceLocation(Location);
 
-	// Trace to see what is under the touch location
-	FHitResult HitResult;
-	GetHitResultAtScreenPosition(ScreenSpaceLocation, CurrentClickTraceChannel, true, HitResult);
-	if (HitResult.bBlockingHit)
-	{
-		// We hit something, move there
-		SetNewMoveDestination(HitResult.ImpactPoint);
-	}
+    // Trace to see what is under the touch location
+    FHitResult HitResult;
+    GetHitResultAtScreenPosition(ScreenSpaceLocation, CurrentClickTraceChannel, true, HitResult);
+    if (HitResult.bBlockingHit)
+    {
+        // We hit something, move there
+        SetNewMoveDestination(HitResult.ImpactPoint);
+    }
 }
 
 void ASurvivalProjectCPPPlayerController::SetNewMoveDestination(const FVector DestLocation)
 {
-	APawn* const MyPawn = GetPawn();
-	if (MyPawn)
-	{
-		float const Distance = FVector::Dist(DestLocation, MyPawn->GetActorLocation());
+    APawn* const MyPawn = GetPawn();
+    if (MyPawn)
+    {
+        float const Distance = FVector::Dist(DestLocation, MyPawn->GetActorLocation());
 
-		// We need to issue move command only if far enough in order for walk animation to play correctly
-		if ((Distance > 120.0f))
-		{
-			UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, DestLocation);
-		}
-	}
+        // We need to issue move command only if far enough in order for walk animation to play correctly
+        if ((Distance > 120.0f))
+        {
+            UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, DestLocation);
+        }
+    }
 }
 
 void ASurvivalProjectCPPPlayerController::OnSetDestinationPressed()
 {
-	// set flag to keep updating destination until released
-	bMoveToMouseCursor = true;
+    // set flag to keep updating destination until released
+    bMoveToMouseCursor = true;
     m_Interactor.Reset();
     m_InteractionTime = 0.f;
 }
 
 void ASurvivalProjectCPPPlayerController::OnSetDestinationReleased()
 {
-	// clear flag to indicate we should stop updating the destination
-	bMoveToMouseCursor = false;
+    // clear flag to indicate we should stop updating the destination
+    bMoveToMouseCursor = false;
 }
 
 void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
@@ -138,18 +139,18 @@ void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
     if (Hit.bBlockingHit)
     {
         AActor* hitActor = Hit.GetActor();
-        
+
         if (hitActor) {
-            UE_LOG(LogClass, Log, TEXT("[Log]Is Actor:%s"), *hitActor->GetName());
+            ALogManager::Log(FString::Printf(TEXT("[Log]Is Actor:%s"), *hitActor->GetName()));
 
             APawn* myPawn = GetPawn();
             if (!myPawn) {
-                UE_LOG(LogClass, Log, TEXT("[Log]myPawn is nullptr"));
+                ALogManager::Log(TEXT("[Log]myPawn is nullptr"));
                 return;
             }
 
             float distance = FMath::Abs(FVector::Dist(myPawn->GetActorLocation(), hitActor->GetActorLocation()));
-            UE_LOG(LogClass, Log, TEXT("[Log]distance : %f"), distance);
+            ALogManager::Log(FString::Printf(TEXT("[Log]distance : %f"), distance));
             if (distance > interactionDistance) {
                 return;
             }
@@ -179,8 +180,6 @@ void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
             float angle = acos(dot);
             FRotator frot;
 
-            UE_LOG(LogClass, Log, TEXT("[Log]dot, %f"), cross_dot);
-
             if (cross_dot > 0) {
                 frot.Yaw = FMath::RadiansToDegrees(angle);
             }
@@ -192,7 +191,7 @@ void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
 
             /*bool bIO = hitActor->ActorHasTag("IO_Base");
             if (bIO) {
-                UE_LOG(LogClass, Log, TEXT("[Log]Is IO"));
+                ALogManager::Log(TEXT("[Log]Is IO"));
             }*/
         }
     }

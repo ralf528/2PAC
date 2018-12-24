@@ -33,7 +33,7 @@ void AIO_Base::Execute()
     {
         if (character) {
             character->AddItemToInventory(info.Type);
-            //this->Destroy();
+            this->Destroy();
         }
     }
     break;

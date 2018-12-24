@@ -11,6 +11,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Materials/Material.h"
+#include "LogManager.h"
 #include "Engine/World.h"
 
 ASurvivalProjectCPPCharacter::ASurvivalProjectCPPCharacter()
@@ -113,12 +114,13 @@ void ASurvivalProjectCPPCharacter::SetupPlayerInputComponent(UInputComponent* Pl
 
 void ASurvivalProjectCPPCharacter::AddItemToInventory(int itemType)
 {
-    UE_LOG(LogClass, Log, TEXT("[Log]AddItem %d"), itemType); 
-
     int32* find = m_inventory.Find(itemType);
     if (find) {
-        UE_LOG(LogClass, Log, TEXT("[Log]Find Item %d"), *find);
         (*find)++;
+        ALogManager::Log(FString::Printf(TEXT("[Log]Add Item %d"), itemType));
+    }
+    else {
+        ALogManager::Log(FString::Printf(TEXT("[Log]not found Item %d"), itemType));
     }
 }
 
@@ -158,7 +160,7 @@ bool ASurvivalProjectCPPCharacter::UseItemForIndex(const int index)
     }
 
     int value = DeleteItem(index);
-    UE_LOG(LogClass, Log, TEXT("[Log]UseItem index : %d, count : %d"), index, value);
+    ALogManager::Log(FString::Printf(TEXT("[Log]UseItem index : %d, count : %d"), index, value));
 
     return true;
 }
