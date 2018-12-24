@@ -36,7 +36,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "MyUnit")
     bool UseItemForIndex(const int index);
 
+    UFUNCTION(BlueprintCallable, Category = "MyUnit")
     bool ExistItem(int index);
+
     int DeleteItem(int index, int count = 1);
 
     void InputUseItemKey01();
