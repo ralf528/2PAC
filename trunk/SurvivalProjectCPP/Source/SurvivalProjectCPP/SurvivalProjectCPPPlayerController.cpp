@@ -162,32 +162,7 @@ void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
                 m_Interactor.Start(comp);
             }
 
-            FVector pawn = myPawn->GetActorLocation();
-            FVector item = hitActor->GetActorLocation();
-
-            FVector dir = item - pawn;
-            FVector forward = myPawn->GetActorForwardVector();
-            FVector up = myPawn->GetActorUpVector();
-            dir.Normalize();
-            forward.Normalize();
-            up.Normalize();
-
-            float dot = FVector::DotProduct(forward, dir);
-
-            FVector cross = FVector::CrossProduct(forward, dir);
-            float cross_dot = FVector::DotProduct(cross, up);
-
-            float angle = acos(dot);
-            FRotator frot;
-
-            if (cross_dot > 0) {
-                frot.Yaw = FMath::RadiansToDegrees(angle);
-            }
-            else {
-                frot.Yaw = FMath::RadiansToDegrees(-angle);
-            }
-            //myPawn->SetActorRotation(quat);
-            myPawn->AddActorLocalRotation(frot);
+			RotationTo(hitActor->GetActorLocation());
 
             /*bool bIO = hitActor->ActorHasTag("IO_Base");
             if (bIO) {
@@ -195,4 +170,41 @@ void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
             }*/
         }
     }
+}
+
+void ASurvivalProjectCPPPlayerController::RotationTo(const FVector& dest)
+{
+	APawn* myPawn = GetPawn();
+	if (!myPawn) {
+		return;
+	}
+
+	FVector myPos = myPawn->GetActorLocation();
+
+	FVector dir = dest - myPos;
+	FVector forward = myPawn->GetActorForwardVector();
+	FVector up = myPawn->GetActorUpVector();
+	dir.Normalize();
+	forward.Normalize();
+	up.Normalize();
+
+	float dot = FVector::DotProduct(forward, dir);
+
+	FVector cross = FVector::CrossProduct(forward, dir);
+	float cross_dot = FVector::DotProduct(cross, up);
+
+	FRotator frot;
+	frot.Pitch = 0.f;
+	frot.Roll = 0.f;
+
+	float angle = acos(dot);
+
+	if (cross_dot > 0) {
+		frot.Yaw = FMath::RadiansToDegrees(angle);
+	}
+	else {
+		frot.Yaw = FMath::RadiansToDegrees(-angle);
+	}
+
+	myPawn->AddActorLocalRotation(frot);
 }

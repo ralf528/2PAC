@@ -50,6 +50,8 @@ protected:
     UFUNCTION(BlueprintCallable)
     bool IsInteracting() { return m_Interactor.IsInteracting(); }
 
+	void RotationTo(const FVector& dest);
+
 private:
     /*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MyUnit", meta = (AllowPrivateAccess = "true"))
     bool m_bInteracting;*/
