@@ -49,13 +49,6 @@ public:
 	// Sets default values for this actor's properties
 	ADataTableManager();
 
-    // Load Table data
-    UFUNCTION(BlueprintCallable)
-    bool LoadDataTable();
-
-    UFUNCTION(BlueprintCallable)
-    bool LoadItemTable();
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -65,6 +58,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
+	// Load Table data
+	UFUNCTION(BlueprintCallable)
+	bool LoadDataTable();
+
+	UFUNCTION(BlueprintCallable)
+	bool LoadItemTable();
+
     UFUNCTION(BlueprintCallable)
     FTD_Item& GetItemData(int index);
 

@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "DataTableManager.h"
+#include "MyGameInstance.h"
 
 // Sets default values
 ADataTableManager::ADataTableManager()
@@ -8,45 +9,53 @@ ADataTableManager::ADataTableManager()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-bool ADataTableManager::LoadDataTable()
-{
-    LoadItemTable();
-
-    return true;
-}
-
-bool ADataTableManager::LoadItemTable()
-{
-    if (!m_ItemTable) {
-        UE_LOG(LogClass, Log, TEXT("[Log]Failed to load table : ItemTable"));
-        return false;
-    }
-
-    FString ContextString;
-    TArray<FName> RowNames = m_ItemTable->GetRowNames();
-
-    int i = 0;
-    for (auto &name : RowNames) {
-        FTD_Item* item = m_ItemTable->FindRow<FTD_Item>(name, ContextString);
-        if (item) {
-            m_mapItems.Add(i, *item);
-            UE_LOG(LogClass, Log, TEXT("[Log]Item : %d, %s"), item->ItemType, *item->Name.ToString());
-        }
-    }
-
-    return true;
-}
-
 // Called when the game starts or when spawned
 void ADataTableManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+	auto game = dynamic_cast<UMyGameInstance*>(GetGameInstance());
+	if (!game) {
+		return;
+	}
+
+	game->SetDataTableManager(this);
+	LoadDataTable();
 }
 
 // Called every frame
 void ADataTableManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+bool ADataTableManager::LoadDataTable()
+{
+	LoadItemTable();
+
+	return true;
+}
+
+bool ADataTableManager::LoadItemTable()
+{
+	if (!m_ItemTable) {
+		UE_LOG(LogClass, Log, TEXT("[Log]Failed to load table : ItemTable"));
+		return false;
+	}
+
+	FString ContextString;
+	TArray<FName> RowNames = m_ItemTable->GetRowNames();
+
+	int i = 0;
+	for (auto &name : RowNames) {
+		FTD_Item* item = m_ItemTable->FindRow<FTD_Item>(name, ContextString);
+		if (item) {
+			m_mapItems.Add(i, *item);
+			UE_LOG(LogClass, Log, TEXT("[Log]Item : %d, %s"), item->ItemType, *item->Name.ToString());
+		}
+	}
+
+	return true;
 }
 
 // 아이템 테이블의 데이터를 반환

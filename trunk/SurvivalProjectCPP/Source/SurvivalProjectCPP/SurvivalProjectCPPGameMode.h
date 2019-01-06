@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "DataTableManager.h"
 #include "SurvivalProjectCPPGameMode.generated.h"
 
 UCLASS(minimalapi)
@@ -15,17 +14,8 @@ class ASurvivalProjectCPPGameMode : public AGameModeBase
 public:
 	ASurvivalProjectCPPGameMode();
 
-	// Setter
-    UFUNCTION(BlueprintCallable)
-    void SetDataTableManager(ADataTableManager* dataTable) { if (!m_dataTableManager) { m_dataTableManager = dataTable; } }
-
-	// Getter
-    UFUNCTION(BlueprintCallable)
-    ADataTableManager* GetDataTableManager() { return m_dataTableManager; }
-
 private:
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "DataTable", meta = (AllowPrivateAccess = "true"))
-    ADataTableManager* m_dataTableManager;
+    
 };
 
 

@@ -192,7 +192,12 @@ bool ASurvivalProjectCPPCharacter::CombineItem(const int index)
 		return false;
 	}
 
-	ADataTableManager* table = mode->GetDataTableManager();
+	auto game = dynamic_cast<UMyGameInstance*>(GetGameInstance());
+	if (!game) {
+		return false;
+	}
+
+	ADataTableManager* table = game->GetDataTableManager();
 	if (!table) {
 		return false;
 	}
