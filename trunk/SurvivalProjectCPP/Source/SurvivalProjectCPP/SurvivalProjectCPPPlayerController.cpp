@@ -29,10 +29,9 @@ void ASurvivalProjectCPPPlayerController::PlayerTick(float DeltaTime)
     // interaction
     if (m_Interactor.IsInteracting()) {
         m_InteractionTime += DeltaTime * 100.f;
-        if (m_InteractionTime > 100.f) {
+        if (m_InteractionTime > m_Interactor.GetTime()) {
             m_InteractionTime = 0.f;
             m_Interactor.Complete();
-            ALogManager::Log(TEXT("[Log]Interaction End"));
         }
     }
 }

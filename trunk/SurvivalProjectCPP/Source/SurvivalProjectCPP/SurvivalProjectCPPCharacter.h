@@ -49,6 +49,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "MyUnit")
     bool CombineItem(const int index);
 
+	// Key Bind
+	void InputActiveUI();
+
 private:
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

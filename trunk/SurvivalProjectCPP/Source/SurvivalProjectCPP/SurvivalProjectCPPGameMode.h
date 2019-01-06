@@ -15,9 +15,11 @@ class ASurvivalProjectCPPGameMode : public AGameModeBase
 public:
 	ASurvivalProjectCPPGameMode();
 
+	// Setter
     UFUNCTION(BlueprintCallable)
     void SetDataTableManager(ADataTableManager* dataTable) { if (!m_dataTableManager) { m_dataTableManager = dataTable; } }
 
+	// Getter
     UFUNCTION(BlueprintCallable)
     ADataTableManager* GetDataTableManager() { return m_dataTableManager; }
 

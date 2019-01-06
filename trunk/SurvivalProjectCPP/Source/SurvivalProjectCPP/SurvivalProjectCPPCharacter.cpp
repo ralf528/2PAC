@@ -12,7 +12,9 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Materials/Material.h"
 #include "LogManager.h"
+#include "MyGameInstance.h"
 #include "Engine/World.h"
+#include "UserWidget.h"
 
 ASurvivalProjectCPPCharacter::ASurvivalProjectCPPCharacter()
 {
@@ -61,7 +63,7 @@ ASurvivalProjectCPPCharacter::ASurvivalProjectCPPCharacter()
 
 void ASurvivalProjectCPPCharacter::Tick(float DeltaSeconds)
 {
-    Super::Tick(DeltaSeconds);
+	Super::Tick(DeltaSeconds);
 
 	if (CursorToWorld != nullptr)
 	{
@@ -93,117 +95,144 @@ void ASurvivalProjectCPPCharacter::Tick(float DeltaSeconds)
 
 void ASurvivalProjectCPPCharacter::PostInitProperties()
 {
-    Super::PostInitProperties();
+	Super::PostInitProperties();
 
-    //< 인벤토리 셋팅
-    m_inventory.Add(1, 0);
-    m_inventory.Add(2, 0);
-    m_inventory.Add(3, 0);
-    m_inventory.Add(4, 0);
+	//< 인벤토리 셋팅
+	m_inventory.Add(1, 0);
+	m_inventory.Add(2, 0);
+	m_inventory.Add(3, 0);
+	m_inventory.Add(4, 0);
 }
 
 void ASurvivalProjectCPPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-    Super::SetupPlayerInputComponent(PlayerInputComponent);
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-    PlayerInputComponent->BindAction("UseItem_01", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputUseItemKey01);
-    PlayerInputComponent->BindAction("UseItem_02", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputUseItemKey02);
-    PlayerInputComponent->BindAction("UseItem_03", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputUseItemKey03);
-    PlayerInputComponent->BindAction("UseItem_04", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputUseItemKey04);
+	PlayerInputComponent->BindAction("UseItem_01", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputUseItemKey01);
+	PlayerInputComponent->BindAction("UseItem_02", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputUseItemKey02);
+	PlayerInputComponent->BindAction("UseItem_03", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputUseItemKey03);
+	PlayerInputComponent->BindAction("UseItem_04", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputUseItemKey04);
+	PlayerInputComponent->BindAction("ActiveUI", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputActiveUI);
 }
 
 void ASurvivalProjectCPPCharacter::AddItemToInventory(int itemType)
 {
-    int32* find = m_inventory.Find(itemType);
-    if (find) {
-        (*find)++;
-        ALogManager::Log(FString::Printf(TEXT("[Log]Add Item %d"), itemType));
-    }
-    else {
-        ALogManager::Log(FString::Printf(TEXT("[Log]not found Item %d"), itemType));
-    }
+	int32* find = m_inventory.Find(itemType);
+	if (find) {
+		(*find)++;
+		ALogManager::Log(FString::Printf(TEXT("[Log]Add Item %d"), itemType));
+	}
+	else {
+		ALogManager::Log(FString::Printf(TEXT("[Log]not found Item %d"), itemType));
+	}
 }
 
 void ASurvivalProjectCPPCharacter::InputUseItemKey01()
 {
-    UseItemForIndex(1);
+	UseItemForIndex(1);
 }
 
 void ASurvivalProjectCPPCharacter::InputUseItemKey02()
 {
-    UseItemForIndex(2);
+	UseItemForIndex(2);
 }
 
 void ASurvivalProjectCPPCharacter::InputUseItemKey03()
 {
-    UseItemForIndex(3);
+	UseItemForIndex(3);
 }
 
 void ASurvivalProjectCPPCharacter::InputUseItemKey04()
 {
-    UseItemForIndex(4);
+	UseItemForIndex(4);
 }
 
 bool ASurvivalProjectCPPCharacter::UseItemForIndex(const int index)
 {
-    //< 인벤토리
-    if (index >= m_inventory.Num()) {
-        return false;
-    }
+	//< 인벤토리
+	if (index >= m_inventory.Num()) {
+		return false;
+	}
 
-    /*if (m_inventory.Find(index) == nullptr) {
-        return false;
-    }*/
+	/*if (m_inventory.Find(index) == nullptr) {
+		return false;
+	}*/
 
-    if (!ExistItem(index)) {
-        return false;
-    }
+	if (!ExistItem(index)) {
+		return false;
+	}
 
-    int value = DeleteItem(index);
-    ALogManager::Log(FString::Printf(TEXT("[Log]UseItem index : %d, count : %d"), index, value));
+	int value = DeleteItem(index);
+	ALogManager::Log(FString::Printf(TEXT("[Log]UseItem index : %d, count : %d"), index, value));
 
-    return true;
+	return true;
 }
 
 bool ASurvivalProjectCPPCharacter::ExistItem(int index)
 {
-    if (m_inventory[index] <= 0) {
-        return false;
-    }
+	if (m_inventory[index] <= 0) {
+		return false;
+	}
 
-    return true;
+	return true;
 }
 
 int ASurvivalProjectCPPCharacter::DeleteItem(int index, int count)
 {
-    int remain = m_inventory[index] - count;
-    m_inventory[index] = (remain < 0) ? 0 : remain;
+	int remain = m_inventory[index] - count;
+	m_inventory[index] = (remain < 0) ? 0 : remain;
 
-    return m_inventory[index];
+	return m_inventory[index];
 }
 
 bool ASurvivalProjectCPPCharacter::CombineItem(const int index)
 {
-    ASurvivalProjectCPPGameMode* mode = Cast<ASurvivalProjectCPPGameMode>(GetWorld()->GetAuthGameMode());
-    if (!mode) {
-        return false;
-    }
+	ASurvivalProjectCPPGameMode* mode = Cast<ASurvivalProjectCPPGameMode>(GetWorld()->GetAuthGameMode());
+	if (!mode) {
+		return false;
+	}
 
-    ADataTableManager* table = mode->GetDataTableManager();
-    if (!table) {
-        return false;
-    }
+	ADataTableManager* table = mode->GetDataTableManager();
+	if (!table) {
+		return false;
+	}
 
-    FTD_CombineItem& data = table->GetCombineItemData(index);
+	FTD_CombineItem& data = table->GetCombineItemData(index);
 
-    if (!ExistItem(data.MaterialItemType1) || !ExistItem(data.MaterialItemType2)) {
-        UE_LOG(LogClass, Log, TEXT("[Log]not enough Combine Material : %d, %d"), data.MaterialItemType1, data.MaterialItemType2);
-        return false;
-    }
+	if (!ExistItem(data.MaterialItemType1) || !ExistItem(data.MaterialItemType2)) {
+		UE_LOG(LogClass, Log, TEXT("[Log]not enough Combine Material : %d, %d"), data.MaterialItemType1, data.MaterialItemType2);
+		return false;
+	}
 
-    DeleteItem(data.MaterialItemType1);
-    DeleteItem(data.MaterialItemType2);
-    AddItemToInventory(data.ResultItemType);
+	DeleteItem(data.MaterialItemType1);
+	DeleteItem(data.MaterialItemType2);
+	AddItemToInventory(data.ResultItemType);
 
-    return true;
+	return true;
+}
+
+void ASurvivalProjectCPPCharacter::InputActiveUI()
+{
+	// 게임 인스턴스에서 받아오자
+	UMyGameInstance* inst = dynamic_cast<UMyGameInstance*>(GetGameInstance());
+	if (!inst) {
+		return;
+	}
+
+	if (!inst->GetUIManager()) {
+		return;
+	}
+
+	UUserWidget* widget = inst->GetUIManager()->GetUserWidget(E_UI::eUI_Combine);
+	if (!widget) {
+		return;
+	}
+
+	ESlateVisibility eVis = widget->GetVisibility();
+	if ((widget->GetVisibility() == ESlateVisibility::Visible) || (widget->GetVisibility() == ESlateVisibility::SelfHitTestInvisible)) {
+		widget->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else if (widget->GetVisibility() == ESlateVisibility::Hidden) {
+		widget->SetVisibility(ESlateVisibility::Visible);
+	}
 }

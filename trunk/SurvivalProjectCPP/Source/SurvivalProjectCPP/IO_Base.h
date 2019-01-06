@@ -62,9 +62,10 @@ public:
 
     void Reset() { _object = nullptr; }
 
-    void Start(AIO_Base* obj)
+    void Start(AIO_Base* obj, float time = 100.f)
     {
         _object = obj;
+		_time = time;
     }
 
     void Complete()
@@ -75,10 +76,15 @@ public:
         Reset();
     }
 
+public:
     AIO_Base* GetObject() { return _object; }
 
     bool IsInteracting() { return (_object != nullptr); }
 
+	void SetTime(float time) { _time = time; }
+	float GetTime() { return _time; }
+
 private:
     AIO_Base* _object;
+	float _time;
 };
