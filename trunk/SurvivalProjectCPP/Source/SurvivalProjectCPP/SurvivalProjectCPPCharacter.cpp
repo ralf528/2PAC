@@ -115,11 +115,11 @@ void ASurvivalProjectCPPCharacter::SetupPlayerInputComponent(UInputComponent* Pl
 	PlayerInputComponent->BindAction("ActiveUI", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputActiveUI);
 }
 
-void ASurvivalProjectCPPCharacter::AddItemToInventory(int itemType)
+void ASurvivalProjectCPPCharacter::AddItemToInventory(int itemType, int amount)
 {
 	int32* find = m_inventory.Find(itemType);
 	if (find) {
-		(*find)++;
+		(*find) += amount;
 		ALogManager::Log(FString::Printf(TEXT("[Log]Add Item %d"), itemType));
 	}
 	else {
@@ -177,10 +177,41 @@ bool ASurvivalProjectCPPCharacter::ExistItem(int index)
 	return true;
 }
 
+bool ASurvivalProjectCPPCharacter::SwapItemForIndex(const int src, const int dst)
+{
+	if (src == dst) {
+		return false;
+	}
+
+	if (!ExistItem(src)) {
+		return false;
+	}
+
+	if (ExistItem(dst)) {
+		int srcAmount = m_inventory[src];
+		int dstAmount = m_inventory[dst];
+		DeleteItem(src, -1);
+		DeleteItem(dst, -1);
+		AddItemToInventory(src, dstAmount);
+		AddItemToInventory(dst, srcAmount);
+	}
+	else {
+		AddItemToInventory(dst, m_inventory[src]);
+		DeleteItem(src, -1);
+	}
+
+	return true;
+}
+
 int ASurvivalProjectCPPCharacter::DeleteItem(int index, int count)
 {
-	int remain = m_inventory[index] - count;
-	m_inventory[index] = (remain < 0) ? 0 : remain;
+	if (count == -1) {
+		m_inventory[index] = 0;
+	}
+	else {
+		int remain = m_inventory[index] - count;
+		m_inventory[index] = (remain < 0) ? 0 : remain;
+	}
 
 	return m_inventory[index];
 }

@@ -30,7 +30,7 @@ public:
 	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
 
     UFUNCTION(BlueprintCallable, Category = "MyUnit")
-    void AddItemToInventory(int itemType);
+    void AddItemToInventory(int itemType, int amount = 1);
 
     //< 아이템 사용
     UFUNCTION(BlueprintCallable, Category = "MyUnit")
@@ -38,6 +38,9 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "MyUnit")
     bool ExistItem(int index);
+
+	UFUNCTION(BlueprintCallable, Category = "MyUnit")
+	bool SwapItemForIndex(const int src, const int dst);
 
     int DeleteItem(int index, int count = 1);
 
