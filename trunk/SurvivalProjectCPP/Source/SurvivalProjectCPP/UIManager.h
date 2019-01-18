@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Blueprint/UserWidget.h"
 #include "UIManager.generated.h"
 
 enum E_UI
@@ -13,8 +14,11 @@ enum E_UI
 	eUI_Combine,
 	eUI_CastingBar,
 	eUI_Minimap,
+	eUI_QuickSlot,
 	SIZE
 };
+
+//class UUserWidget;
 
 UCLASS()
 class SURVIVALPROJECTCPP_API AUIManager : public AActor
@@ -34,6 +38,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UUserWidget* GetUserWidget(E_UI ui);
+
+	bool ActiveUI(E_UI eUI, bool bActive);
 
 private:
 	UPROPERTY(EditAnywhere, Category = "UI")

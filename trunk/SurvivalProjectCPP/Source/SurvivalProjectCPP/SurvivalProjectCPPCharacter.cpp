@@ -98,10 +98,17 @@ void ASurvivalProjectCPPCharacter::PostInitProperties()
 	Super::PostInitProperties();
 
 	//< 인벤토리 셋팅
-	m_inventory.Add(1, 0);
-	m_inventory.Add(2, 0);
-	m_inventory.Add(3, 0);
-	m_inventory.Add(4, 0);
+	m_inventory.Reset();
+	m_inventory.Add(1, 1);
+	m_inventory.Add(2, 2);
+	m_inventory.Add(3, 3);
+	m_inventory.Add(4, 4);
+
+	m_QuickSlot.Reset();
+	m_QuickSlot.Add(1);
+	m_QuickSlot.Add(2);
+	m_QuickSlot.Add(3);
+	m_QuickSlot.Add(4);
 }
 
 void ASurvivalProjectCPPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -112,7 +119,8 @@ void ASurvivalProjectCPPCharacter::SetupPlayerInputComponent(UInputComponent* Pl
 	PlayerInputComponent->BindAction("UseItem_02", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputUseItemKey02);
 	PlayerInputComponent->BindAction("UseItem_03", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputUseItemKey03);
 	PlayerInputComponent->BindAction("UseItem_04", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputUseItemKey04);
-	PlayerInputComponent->BindAction("ActiveUI", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputActiveUI);
+	PlayerInputComponent->BindAction("ActiveInven", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputActiveInven);
+	PlayerInputComponent->BindAction("ActiveCombine", IE_Pressed, this, &ASurvivalProjectCPPCharacter::InputActiveCombine);
 }
 
 void ASurvivalProjectCPPCharacter::AddItemToInventory(int itemType, int amount)
@@ -150,13 +158,9 @@ void ASurvivalProjectCPPCharacter::InputUseItemKey04()
 bool ASurvivalProjectCPPCharacter::UseItemForIndex(const int index)
 {
 	//< 인벤토리
-	if (index >= m_inventory.Num()) {
+	if (m_inventory.Find(index) == nullptr) {
 		return false;
 	}
-
-	/*if (m_inventory.Find(index) == nullptr) {
-		return false;
-	}*/
 
 	if (!ExistItem(index)) {
 		return false;
@@ -170,11 +174,34 @@ bool ASurvivalProjectCPPCharacter::UseItemForIndex(const int index)
 
 bool ASurvivalProjectCPPCharacter::ExistItem(int index)
 {
+	if (m_inventory.Find(index) == nullptr) {
+		return false;
+	}
+
 	if (m_inventory[index] <= 0) {
 		return false;
 	}
 
 	return true;
+}
+
+int ASurvivalProjectCPPCharacter::GetItemType(int index)
+{
+	// 지금은 key가 type 이고, value가 count 인듯..
+	if (m_inventory.Find(index) == nullptr) {
+		return false;
+	}
+
+	return m_inventory[index];
+}
+
+int ASurvivalProjectCPPCharacter::GetItemCount(int index)
+{
+	if (m_inventory.Find(index) == nullptr) {
+		return false;
+	}
+
+	return m_inventory[index];
 }
 
 bool ASurvivalProjectCPPCharacter::SwapItemForIndex(const int src, const int dst)
@@ -205,6 +232,10 @@ bool ASurvivalProjectCPPCharacter::SwapItemForIndex(const int src, const int dst
 
 int ASurvivalProjectCPPCharacter::DeleteItem(int index, int count)
 {
+	if (m_inventory.Find(index) == nullptr) {
+		return false;
+	}
+
 	if (count == -1) {
 		m_inventory[index] = 0;
 	}
@@ -247,7 +278,7 @@ bool ASurvivalProjectCPPCharacter::CombineItem(const int index)
 	return true;
 }
 
-void ASurvivalProjectCPPCharacter::InputActiveUI()
+void ASurvivalProjectCPPCharacter::OnOffWidget(E_UI eUI)
 {
 	// 게임 인스턴스에서 받아오자
 	UMyGameInstance* inst = dynamic_cast<UMyGameInstance*>(GetGameInstance());
@@ -259,7 +290,7 @@ void ASurvivalProjectCPPCharacter::InputActiveUI()
 		return;
 	}
 
-	UUserWidget* widget = inst->GetUIManager()->GetUserWidget(E_UI::eUI_Combine);
+	UUserWidget* widget = inst->GetUIManager()->GetUserWidget(eUI);
 	if (!widget) {
 		return;
 	}
@@ -271,4 +302,43 @@ void ASurvivalProjectCPPCharacter::InputActiveUI()
 	else if (widget->GetVisibility() == ESlateVisibility::Hidden) {
 		widget->SetVisibility(ESlateVisibility::Visible);
 	}
+}
+
+void ASurvivalProjectCPPCharacter::InputActiveInven()
+{
+	OnOffWidget(E_UI::eUI_Inven);
+}
+
+void ASurvivalProjectCPPCharacter::InputActiveCombine()
+{
+	OnOffWidget(E_UI::eUI_Combine);
+}
+
+int ASurvivalProjectCPPCharacter::GetQuickSlot(const int index)
+{
+	if (m_QuickSlot.GetAllocatedSize() / sizeof(int) <= (unsigned)index) {
+		return 0;
+	}
+
+	//ALogManager::Log(FString::Printf(TEXT("[Log]Slot = %d (index : %d)"), m_QuickSlot[index], index));
+
+	return m_QuickSlot[index];
+}
+
+bool ASurvivalProjectCPPCharacter::SwapQuickSlot(const int src, const int dst)
+{
+	ALogManager::Log(FString::Printf(TEXT("quickslot swap : %d to %d"), src, dst));
+
+	int size = (int)m_QuickSlot.GetAllocatedSize() / sizeof(int);
+	if (size <= src) {
+		return false;
+	}
+
+	if (size <= dst) {
+		return false;
+	}
+
+	m_QuickSlot.Swap(src, dst);
+
+	return true;
 }

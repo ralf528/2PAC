@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "SurvivalProjectCPPCharacter.generated.h"
 
+enum E_UI;
+
 UCLASS(Blueprintable)
 class ASurvivalProjectCPPCharacter : public ACharacter
 {
@@ -32,7 +34,16 @@ public:
     UFUNCTION(BlueprintCallable, Category = "MyUnit")
     void AddItemToInventory(int itemType, int amount = 1);
 
-    //< 아이템 사용
+	// key binding
+	void InputUseItemKey01();
+	void InputUseItemKey02();
+	void InputUseItemKey03();
+	void InputUseItemKey04();
+
+	void InputActiveInven();
+	void InputActiveCombine();
+
+    // 아이템
     UFUNCTION(BlueprintCallable, Category = "MyUnit")
     bool UseItemForIndex(const int index);
 
@@ -40,20 +51,30 @@ public:
     bool ExistItem(int index);
 
 	UFUNCTION(BlueprintCallable, Category = "MyUnit")
+	int GetItemType(int index);
+
+	UFUNCTION(BlueprintCallable, Category = "MyUnit")
+	int GetItemCount(int index);
+
+	UFUNCTION(BlueprintCallable, Category = "MyUnit")
 	bool SwapItemForIndex(const int src, const int dst);
 
+	UFUNCTION(BlueprintCallable, Category = "MyUnit")
     int DeleteItem(int index, int count = 1);
-
-    void InputUseItemKey01();
-    void InputUseItemKey02();
-    void InputUseItemKey03();
-    void InputUseItemKey04();
 
     UFUNCTION(BlueprintCallable, Category = "MyUnit")
     bool CombineItem(const int index);
 
-	// Key Bind
-	void InputActiveUI();
+	// ui
+	void OnOffWidget(E_UI eUI);
+
+	// 퀵 슬롯
+	UFUNCTION(BlueprintCallable, Category = "QuickSlot")
+	int GetQuickSlot(const int index);
+
+	UFUNCTION(BlueprintCallable, Category = "QuickSlot")
+	bool SwapQuickSlot(const int src, const int dst);
+	
 
 private:
 	/** Top down camera */
@@ -70,5 +91,8 @@ private:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MyUnit", meta = (AllowPrivateAccess = "true"))
     TMap<int, int> m_inventory;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MyUnit", meta = (AllowPrivateAccess = "true"))
+	TArray<int> m_QuickSlot;
 };
 

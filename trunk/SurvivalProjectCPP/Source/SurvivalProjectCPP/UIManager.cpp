@@ -2,7 +2,7 @@
 
 #include "UIManager.h"
 #include "UObject/ConstructorHelpers.h"
-#include "Blueprint/UserWidget.h"
+//#include "Blueprint/UserWidget.h"
 #include "LogManager.h"
 
 
@@ -17,7 +17,8 @@ AUIManager::AUIManager()
 		TEXT("/Game/Resources/UI/UI_Inventory"),
 		TEXT("/Game/Resources/UI/UI_Combine"),
 		TEXT("/Game/Resources/UI/UI_CastingGauge"),
-		TEXT("/Game/Resources/UI/UI_MiniMap")
+		TEXT("/Game/Resources/UI/UI_MiniMap"),
+		TEXT("/Game/Resources/UI/UI_QuickSlot")
 	};
 
 	/*static ConstructorHelpers::FClassFinder<UUserWidget> widgetObj_0(TEXT("/Game/Resources/UI/UI_HealthPointBar"));
@@ -48,10 +49,12 @@ void AUIManager::BeginPlay()
 
 			if (m_widget[i]) {
 				m_widget[i]->AddToViewport();
-				ALogManager::Log(TEXT("[Log]Add To Viewport"));
 			}
 		}
 	}
+
+	ActiveUI(eUI_Combine, false);
+	ActiveUI(eUI_Inven, false);
 }
 
 // Called every frame
@@ -63,4 +66,21 @@ void AUIManager::Tick(float DeltaTime)
 UUserWidget* AUIManager::GetUserWidget(E_UI ui)
 {
 	return m_widget[(int)ui];
+}
+
+bool AUIManager::ActiveUI(E_UI eUI, bool bActive)
+{
+	UUserWidget* widget = GetUserWidget(eUI);
+	if (!widget) {
+		return false;
+	}
+
+	if (bActive) {
+		widget->SetVisibility(ESlateVisibility::Visible);
+	}
+	else {
+		widget->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	return true;
 }
