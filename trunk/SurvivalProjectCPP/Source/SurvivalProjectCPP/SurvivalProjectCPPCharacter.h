@@ -95,4 +95,3 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MyUnit", meta = (AllowPrivateAccess = "true"))
 	TArray<int> m_QuickSlot;
 };
-
