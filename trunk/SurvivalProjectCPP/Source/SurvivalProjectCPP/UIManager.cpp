@@ -18,7 +18,8 @@ AUIManager::AUIManager()
 		TEXT("/Game/Resources/UI/UI_Combine"),
 		TEXT("/Game/Resources/UI/UI_CastingGauge"),
 		TEXT("/Game/Resources/UI/UI_MiniMap"),
-		TEXT("/Game/Resources/UI/UI_QuickSlot")
+		TEXT("/Game/Resources/UI/UI_QuickSlot"),
+		TEXT("/Game/Assets/BluePrints/UI/Panel/Main_UI")
 	};
 
 	/*static ConstructorHelpers::FClassFinder<UUserWidget> widgetObj_0(TEXT("/Game/Resources/UI/UI_HealthPointBar"));

@@ -189,7 +189,7 @@ int ASurvivalProjectCPPCharacter::GetItemType(int index)
 {
 	// 지금은 key가 type 이고, value가 count 인듯..
 	if (m_inventory.Find(index) == nullptr) {
-		return false;
+		return 0;
 	}
 
 	return m_inventory[index];
@@ -198,7 +198,7 @@ int ASurvivalProjectCPPCharacter::GetItemType(int index)
 int ASurvivalProjectCPPCharacter::GetItemCount(int index)
 {
 	if (m_inventory.Find(index) == nullptr) {
-		return false;
+		return 0;
 	}
 
 	return m_inventory[index];

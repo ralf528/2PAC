@@ -15,6 +15,7 @@ enum E_UI
 	eUI_CastingBar,
 	eUI_Minimap,
 	eUI_QuickSlot,
+	eUI_MainPanel,
 	SIZE
 };
 
