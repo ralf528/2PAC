@@ -16,6 +16,9 @@
 #include "Engine/World.h"
 #include "UserWidget.h"
 
+const int gb_nMaxInvenSlot = 16;
+const int gb_nMaxQuickSlot = 8;
+
 ASurvivalProjectCPPCharacter::ASurvivalProjectCPPCharacter()
 {
 	// Set size for player capsule
@@ -99,16 +102,32 @@ void ASurvivalProjectCPPCharacter::PostInitProperties()
 
 	//< 인벤토리 셋팅
 	m_inventory.Reset();
-	m_inventory.Add(1, 1);
-	m_inventory.Add(2, 2);
-	m_inventory.Add(3, 3);
-	m_inventory.Add(4, 4);
+    AddItemToInventory(1, 1);
+    AddItemToInventory(2, 2);
+    AddItemToInventory(3, 3);
+    AddItemToInventory(4, 4);
+    AddItemToInventory(0, 0);
+    AddItemToInventory(0, 0);
+    AddItemToInventory(0, 0);
+    AddItemToInventory(0, 0);
+    AddItemToInventory(0, 0);
+    AddItemToInventory(0, 0);
+    AddItemToInventory(0, 0);
+    AddItemToInventory(0, 0);
+    AddItemToInventory(0, 0);
+    AddItemToInventory(0, 0);
+    AddItemToInventory(0, 0);
+    AddItemToInventory(0, 0);
 
 	m_QuickSlot.Reset();
+	m_QuickSlot.Add(0);
 	m_QuickSlot.Add(1);
 	m_QuickSlot.Add(2);
 	m_QuickSlot.Add(3);
-	m_QuickSlot.Add(4);
+    m_QuickSlot.Add(gb_nMaxInvenSlot);
+    m_QuickSlot.Add(gb_nMaxInvenSlot);
+    m_QuickSlot.Add(gb_nMaxInvenSlot);
+    m_QuickSlot.Add(gb_nMaxInvenSlot);
 }
 
 void ASurvivalProjectCPPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -125,43 +144,51 @@ void ASurvivalProjectCPPCharacter::SetupPlayerInputComponent(UInputComponent* Pl
 
 void ASurvivalProjectCPPCharacter::AddItemToInventory(int itemType, int amount)
 {
-	int32* find = m_inventory.Find(itemType);
-	if (find) {
-		(*find) += amount;
-		ALogManager::Log(FString::Printf(TEXT("[Log]Add Item %d"), itemType));
-	}
-	else {
-		ALogManager::Log(FString::Printf(TEXT("[Log]not found Item %d"), itemType));
-	}
+    if (itemType == 0) {
+        FInvenItemInfo info;
+        info.itemType = itemType;
+        info.amount = amount;
+        m_inventory.Add(GetNextEmptySlot(), info);
+        return;
+    }
+
+    int index = FindItemIndexForType(itemType);
+    if (index != gb_nMaxInvenSlot) {
+        FInvenItemInfo* find = m_inventory.Find(index);
+        if (find) {
+            (*find).amount += amount;
+        }
+    }
+    else {
+        FInvenItemInfo info;
+        info.itemType = itemType;
+        info.amount = amount;
+        m_inventory.Add(GetNextEmptySlot(), info);
+    }
 }
 
 void ASurvivalProjectCPPCharacter::InputUseItemKey01()
 {
-	UseItemForIndex(1);
+	UseItemForIndex(0);
 }
 
 void ASurvivalProjectCPPCharacter::InputUseItemKey02()
 {
-	UseItemForIndex(2);
+	UseItemForIndex(1);
 }
 
 void ASurvivalProjectCPPCharacter::InputUseItemKey03()
 {
-	UseItemForIndex(3);
+	UseItemForIndex(2);
 }
 
 void ASurvivalProjectCPPCharacter::InputUseItemKey04()
 {
-	UseItemForIndex(4);
+	UseItemForIndex(3);
 }
 
 bool ASurvivalProjectCPPCharacter::UseItemForIndex(const int index)
 {
-	//< 인벤토리
-	if (m_inventory.Find(index) == nullptr) {
-		return false;
-	}
-
 	if (!ExistItem(index)) {
 		return false;
 	}
@@ -172,13 +199,30 @@ bool ASurvivalProjectCPPCharacter::UseItemForIndex(const int index)
 	return true;
 }
 
+int ASurvivalProjectCPPCharacter::FindItemIndexForType(int itemType)
+{
+    for (int i = 0; i < gb_nMaxInvenSlot; i++) {
+        FInvenItemInfo* info = m_inventory.Find(i);
+
+        if (!info) {
+            continue;
+        }
+
+        if (info->itemType == itemType) {
+            return i;
+        }
+    }
+
+    return gb_nMaxInvenSlot;
+}
+
 bool ASurvivalProjectCPPCharacter::ExistItem(int index)
 {
 	if (m_inventory.Find(index) == nullptr) {
 		return false;
 	}
 
-	if (m_inventory[index] <= 0) {
+	if (m_inventory[index].amount <= 0) {
 		return false;
 	}
 
@@ -192,7 +236,7 @@ int ASurvivalProjectCPPCharacter::GetItemType(int index)
 		return 0;
 	}
 
-	return m_inventory[index];
+	return m_inventory[index].itemType;
 }
 
 int ASurvivalProjectCPPCharacter::GetItemCount(int index)
@@ -201,31 +245,22 @@ int ASurvivalProjectCPPCharacter::GetItemCount(int index)
 		return 0;
 	}
 
-	return m_inventory[index];
+	return m_inventory[index].amount;
 }
 
 bool ASurvivalProjectCPPCharacter::SwapItemForIndex(const int src, const int dst)
 {
-	if (src == dst) {
-		return false;
-	}
+    if (src == dst) {
+        return false;
+    }
 
-	if (!ExistItem(src)) {
-		return false;
-	}
+    if (src >= gb_nMaxInvenSlot || dst >= gb_nMaxInvenSlot) {
+        return false;
+    }
 
-	if (ExistItem(dst)) {
-		int srcAmount = m_inventory[src];
-		int dstAmount = m_inventory[dst];
-		DeleteItem(src, -1);
-		DeleteItem(dst, -1);
-		AddItemToInventory(src, dstAmount);
-		AddItemToInventory(dst, srcAmount);
-	}
-	else {
-		AddItemToInventory(dst, m_inventory[src]);
-		DeleteItem(src, -1);
-	}
+    FInvenItemInfo tmp = m_inventory[src];
+    m_inventory[src] = m_inventory[dst];
+    m_inventory[dst] = tmp;
 
 	return true;
 }
@@ -237,14 +272,14 @@ int ASurvivalProjectCPPCharacter::DeleteItem(int index, int count)
 	}
 
 	if (count == -1) {
-		m_inventory[index] = 0;
+		m_inventory[index].amount = 0;
 	}
 	else {
-		int remain = m_inventory[index] - count;
-		m_inventory[index] = (remain < 0) ? 0 : remain;
+		int remain = m_inventory[index].amount - count;
+		m_inventory[index].amount = (remain < 0) ? 0 : remain;
 	}
 
-	return m_inventory[index];
+	return m_inventory[index].amount;
 }
 
 bool ASurvivalProjectCPPCharacter::CombineItem(const int index)
@@ -276,6 +311,17 @@ bool ASurvivalProjectCPPCharacter::CombineItem(const int index)
 	AddItemToInventory(data.ResultItemType);
 
 	return true;
+}
+
+int ASurvivalProjectCPPCharacter::GetNextEmptySlot()
+{
+    for (int i = 0; i < gb_nMaxInvenSlot; i++) {
+        if (!m_inventory.Find(i)) {
+            return i;
+        }
+    }
+
+    return gb_nMaxInvenSlot;
 }
 
 void ASurvivalProjectCPPCharacter::OnOffWidget(E_UI eUI)
@@ -316,8 +362,8 @@ void ASurvivalProjectCPPCharacter::InputActiveCombine()
 
 int ASurvivalProjectCPPCharacter::GetQuickSlot(const int index)
 {
-	if (m_QuickSlot.GetAllocatedSize() / sizeof(int) <= (unsigned)index) {
-		return 0;
+	if (gb_nMaxQuickSlot <= index) {
+		return gb_nMaxInvenSlot;
 	}
 
 	//ALogManager::Log(FString::Printf(TEXT("[Log]Slot = %d (index : %d)"), m_QuickSlot[index], index));

@@ -8,6 +8,15 @@
 
 enum E_UI;
 
+USTRUCT(Blueprintable)
+struct FInvenItemInfo
+{
+    GENERATED_BODY()
+public:
+    int itemType;
+    int amount;
+};
+
 UCLASS(Blueprintable)
 class ASurvivalProjectCPPCharacter : public ACharacter
 {
@@ -48,6 +57,9 @@ public:
     bool UseItemForIndex(const int index);
 
     UFUNCTION(BlueprintCallable, Category = "MyUnit")
+    int FindItemIndexForType(int itemType);
+
+    UFUNCTION(BlueprintCallable, Category = "MyUnit")
     bool ExistItem(int index);
 
 	UFUNCTION(BlueprintCallable, Category = "MyUnit")
@@ -64,6 +76,9 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "MyUnit")
     bool CombineItem(const int index);
+
+    UFUNCTION(BlueprintCallable, Category = "MyUnit")
+    int GetNextEmptySlot();
 
 	// ui
 	void OnOffWidget(E_UI eUI);
@@ -90,7 +105,7 @@ private:
 	class UDecalComponent* CursorToWorld;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MyUnit", meta = (AllowPrivateAccess = "true"))
-    TMap<int, int> m_inventory;
+    TMap<int, FInvenItemInfo> m_inventory;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MyUnit", meta = (AllowPrivateAccess = "true"))
 	TArray<int> m_QuickSlot;
