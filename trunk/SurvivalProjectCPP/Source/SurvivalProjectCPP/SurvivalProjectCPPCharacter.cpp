@@ -385,6 +385,22 @@ int ASurvivalProjectCPPCharacter::GetQuickSlot(const int index)
 	return m_QuickSlot[index];
 }
 
+bool ASurvivalProjectCPPCharacter::AddQuickSlot(const int index, const int itemType)
+{
+    if (gb_nMaxQuickSlot <= index) {
+        return false;
+    }
+
+    for (int i = 0; i < gb_nMaxQuickSlot; i++) {
+        if (m_QuickSlot[i] == itemType) {
+            m_QuickSlot[i] = 0;
+        }
+    }
+
+    m_QuickSlot[index] = itemType;
+    return true;
+}
+
 bool ASurvivalProjectCPPCharacter::SwapQuickSlot(const int src, const int dst)
 {
 	ALogManager::Log(FString::Printf(TEXT("quickslot swap : %d to %d"), src, dst));

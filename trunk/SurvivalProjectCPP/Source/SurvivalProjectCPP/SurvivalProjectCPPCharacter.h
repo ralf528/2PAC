@@ -93,6 +93,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "QuickSlot")
 	int GetQuickSlot(const int index);
 
+    UFUNCTION(BlueprintCallable, Category = "QuickSlot")
+    bool AddQuickSlot(const int index, const int itemType);
+
 	UFUNCTION(BlueprintCallable, Category = "QuickSlot")
 	bool SwapQuickSlot(const int src, const int dst);
 	
