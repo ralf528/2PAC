@@ -120,14 +120,14 @@ void ASurvivalProjectCPPCharacter::PostInitProperties()
     AddItemToInventory(0, 0);
 
 	m_QuickSlot.Reset();
-	m_QuickSlot.Add(0);
 	m_QuickSlot.Add(1);
 	m_QuickSlot.Add(2);
 	m_QuickSlot.Add(3);
-    m_QuickSlot.Add(gb_nMaxInvenSlot);
-    m_QuickSlot.Add(gb_nMaxInvenSlot);
-    m_QuickSlot.Add(gb_nMaxInvenSlot);
-    m_QuickSlot.Add(gb_nMaxInvenSlot);
+    m_QuickSlot.Add(4);
+    m_QuickSlot.Add(0);
+    m_QuickSlot.Add(0);
+    m_QuickSlot.Add(0);
+    m_QuickSlot.Add(0);
 }
 
 void ASurvivalProjectCPPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -199,6 +199,13 @@ bool ASurvivalProjectCPPCharacter::UseItemForIndex(const int index)
 	return true;
 }
 
+bool ASurvivalProjectCPPCharacter::UseItemForType(const int itemType)
+{
+    int index = FindItemIndexForType(itemType);
+    
+    return UseItemForIndex(index);
+}
+
 int ASurvivalProjectCPPCharacter::FindItemIndexForType(int itemType)
 {
     for (int i = 0; i < gb_nMaxInvenSlot; i++) {
@@ -246,6 +253,13 @@ int ASurvivalProjectCPPCharacter::GetItemCount(int index)
 	}
 
 	return m_inventory[index].amount;
+}
+
+int ASurvivalProjectCPPCharacter::GetItemCountByType(int itemType)
+{
+    int index = FindItemIndexForType(itemType);
+    
+    return GetItemCount(index);
 }
 
 bool ASurvivalProjectCPPCharacter::SwapItemForIndex(const int src, const int dst)

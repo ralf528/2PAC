@@ -57,6 +57,9 @@ public:
     bool UseItemForIndex(const int index);
 
     UFUNCTION(BlueprintCallable, Category = "MyUnit")
+    bool UseItemForType(const int itemType);
+
+    UFUNCTION(BlueprintCallable, Category = "MyUnit")
     int FindItemIndexForType(int itemType);
 
     UFUNCTION(BlueprintCallable, Category = "MyUnit")
@@ -67,6 +70,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyUnit")
 	int GetItemCount(int index);
+
+    UFUNCTION(BlueprintCallable, Category = "MyUnit")
+    int GetItemCountByType(int itemType);
 
 	UFUNCTION(BlueprintCallable, Category = "MyUnit")
 	bool SwapItemForIndex(const int src, const int dst);
