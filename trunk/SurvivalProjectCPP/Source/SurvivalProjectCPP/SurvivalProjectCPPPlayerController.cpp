@@ -32,6 +32,7 @@ void ASurvivalProjectCPPPlayerController::PlayerTick(float DeltaTime)
         if (m_InteractionTime > m_Interactor.GetTime()) {
             m_InteractionTime = 0.f;
             m_Interactor.Complete();
+            m_InteractionType = E_BehaviorType::e_BehaviorNone;
         }
     }
 }
@@ -159,6 +160,7 @@ void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
                 ASurvivalProjectCPPCharacter* character = dynamic_cast<ASurvivalProjectCPPCharacter*>(GetPawn());
                 comp->SetCharacter(character);
                 m_Interactor.Start(comp);
+                m_InteractionType = E_BehaviorType::e_BehaviorPickUp;
             }
 
 			RotationTo(hitActor->GetActorLocation());

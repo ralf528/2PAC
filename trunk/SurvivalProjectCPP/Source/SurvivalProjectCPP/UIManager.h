@@ -19,6 +19,19 @@ enum E_UI
 	SIZE
 };
 
+UENUM(BlueprintType)
+enum class EC_UI : uint8
+{
+    ecUI_HPBar,
+    ecUI_Inven,
+    ecUI_Combine,
+    ecUI_CastingBar,
+    ecUI_Minimap,
+    ecUI_QuickSlot,
+    ecUI_MainPanel,
+    SIZE
+};
+
 //class UUserWidget;
 
 UCLASS()
@@ -41,6 +54,9 @@ public:
 	UUserWidget* GetUserWidget(E_UI ui);
 
 	bool ActiveUI(E_UI eUI, bool bActive);
+
+    UFUNCTION(BluePrintCallable)
+    bool ActiveUI(EC_UI ecUI, bool bActive = true);
 
 private:
 	UPROPERTY(EditAnywhere, Category = "UI")

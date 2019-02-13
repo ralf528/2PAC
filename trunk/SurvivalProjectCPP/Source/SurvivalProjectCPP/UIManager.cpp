@@ -85,3 +85,8 @@ bool AUIManager::ActiveUI(E_UI eUI, bool bActive)
 
 	return true;
 }
+
+bool AUIManager::ActiveUI(EC_UI ecUI, bool bActive)
+{
+    return ActiveUI((E_UI)ecUI, bActive);
+}

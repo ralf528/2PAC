@@ -8,6 +8,18 @@
 #include "ExternHeader.h"
 #include "SurvivalProjectCPPPlayerController.generated.h"
 
+UENUM(BlueprintType)
+enum class E_BehaviorType : uint8
+{
+    e_BehaviorNone,
+    e_BehaviorPickUp,
+    e_BehaviorWield,
+    e_BehaviorHammer,
+    e_BehaviorEat,
+    e_BehaviorAttack,
+    e_BehaviorMax
+};
+
 class AIO_Base;
 
 UCLASS()
@@ -50,6 +62,9 @@ protected:
     UFUNCTION(BlueprintCallable)
     bool IsInteracting() { return m_Interactor.IsInteracting(); }
 
+    UFUNCTION(BlueprintCallable)
+    E_BehaviorType GetInteractionType() { return m_InteractionType; }
+
 	void RotationTo(const FVector& dest);
 
 private:
@@ -62,6 +77,8 @@ private:
     CastingTimer m_CastTimer;
 
     FInteractor m_Interactor;
+
+    E_BehaviorType m_InteractionType;
 };
 
 
