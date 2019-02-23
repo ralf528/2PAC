@@ -8,18 +8,6 @@
 #include "ExternHeader.h"
 #include "SurvivalProjectCPPPlayerController.generated.h"
 
-UENUM(BlueprintType)
-enum class E_BehaviorType : uint8
-{
-    e_BehaviorNone,
-    e_BehaviorPickUp,
-    e_BehaviorWield,
-    e_BehaviorHammer,
-    e_BehaviorEat,
-    e_BehaviorAttack,
-    e_BehaviorMax
-};
-
 class AIO_Base;
 
 UCLASS()

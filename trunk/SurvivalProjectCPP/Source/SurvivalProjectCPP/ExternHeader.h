@@ -28,6 +28,18 @@ public:
     float castingTime;
 };
 
+UENUM(BlueprintType)
+enum class E_BehaviorType : uint8
+{
+    e_BehaviorNone,
+    e_BehaviorPickUp,
+    e_BehaviorWield,
+    e_BehaviorHammer,
+    e_BehaviorEat,
+    e_BehaviorAttack,
+    e_BehaviorMax
+};
+
 /**
  * 
  */

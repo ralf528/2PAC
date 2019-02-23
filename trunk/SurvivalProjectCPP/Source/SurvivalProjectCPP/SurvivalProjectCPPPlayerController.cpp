@@ -159,8 +159,9 @@ void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
             if (comp) {
                 ASurvivalProjectCPPCharacter* character = dynamic_cast<ASurvivalProjectCPPCharacter*>(GetPawn());
                 comp->SetCharacter(character);
-                m_Interactor.Start(comp);
-                m_InteractionType = E_BehaviorType::e_BehaviorPickUp;
+                comp->SetInteractionInfo(); //< 시작할때 Set 하고 싶지만 우선 여기서..
+                m_Interactor.Start(comp, comp->GetInfo().castingTime);
+                m_InteractionType = (E_BehaviorType)comp->GetInfo().Animation;
             }
 
 			RotationTo(hitActor->GetActorLocation());

@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "DataTableManager.h"
+#include "LogManager.h"
 #include "MyGameInstance.h"
 
 // Sets default values
@@ -12,6 +13,8 @@ ADataTableManager::ADataTableManager()
 // Called when the game starts or when spawned
 void ADataTableManager::BeginPlay()
 {
+    ALogManager::Log(FString::Printf(TEXT("[ADataTableManager]BeginPlay()")));
+
 	Super::BeginPlay();
 
 	auto game = dynamic_cast<UMyGameInstance*>(GetGameInstance());
@@ -32,6 +35,7 @@ void ADataTableManager::Tick(float DeltaTime)
 bool ADataTableManager::LoadDataTable()
 {
 	LoadItemTable();
+    LoadInteractionTable();
 
 	return true;
 }
@@ -56,6 +60,28 @@ bool ADataTableManager::LoadItemTable()
 	}
 
 	return true;
+}
+
+bool ADataTableManager::LoadInteractionTable()
+{
+    if (!m_InteractionTable) {
+        UE_LOG(LogClass, Log, TEXT("[Log]Failed to load table : ItemTable"));
+        return false;
+    }
+
+    FString ContextString;
+    TArray<FName> RowNames = m_InteractionTable->GetRowNames();
+
+    int i = 0;
+    for (auto &name : RowNames) {
+        FTD_Interact* item = m_InteractionTable->FindRow<FTD_Interact>(name, ContextString);
+        if (item) {
+            m_mapInteractions.Add(i, *item);
+            //UE_LOG(LogClass, Log, TEXT("[Log]Item : %d, %s"), item->, *item->Name.ToString());
+        }
+    }
+
+    return true;
 }
 
 // 아이템 테이블의 데이터를 반환
@@ -95,6 +121,27 @@ FTD_CombineItem& ADataTableManager::GetCombineItemData(int index)
 
     FString strIndex = FString::FromInt(index);
     FTD_CombineItem* row = m_CombineItemTable->FindRow<FTD_CombineItem>(*strIndex, strIndex);
+    if (row) {
+        //UE_LOG(LogClass, Log, TEXT("[Log]CombineItem Row %d = %d + %d"), row->ResultItemType, row->MaterialItemType1, row->MaterialItemType2);
+        return *row;
+    }
+
+    //return nullptr;
+    return tmp;
+}
+
+// 인터렉션 테이블 데이터 반환
+FTD_Interact& ADataTableManager::GetInteractionData(int index)
+{
+    FTD_Interact tmp;
+
+    if (!m_InteractionTable) {
+        UE_LOG(LogClass, Log, TEXT("[TableManager]Invalid InteractionTable"),);
+        return tmp;
+    }
+
+    FString strIndex = FString::FromInt(index);
+    FTD_Interact* row = m_InteractionTable->FindRow<FTD_Interact>(*strIndex, strIndex);
     if (row) {
         //UE_LOG(LogClass, Log, TEXT("[Log]CombineItem Row %d = %d + %d"), row->ResultItemType, row->MaterialItemType1, row->MaterialItemType2);
         return *row;

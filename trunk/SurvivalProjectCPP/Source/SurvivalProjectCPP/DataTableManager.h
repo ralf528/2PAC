@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Engine/DataTable.h"
+#include "ExternHeader.h"
 #include "DataTableManager.generated.h"
 
 USTRUCT(BlueprintType)
@@ -39,6 +40,24 @@ public:
     int MaterialItemType2;
 };
 
+USTRUCT(BlueprintType)
+struct FTD_Interact : public FTableRowBase
+{
+    GENERATED_USTRUCT_BODY()
+public:
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int ItemType;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int ItemCount;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int Animation;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float CastingTime;
+};
 
 UCLASS(Blueprintable)
 class SURVIVALPROJECTCPP_API ADataTableManager : public AActor
@@ -66,10 +85,16 @@ public:
 	bool LoadItemTable();
 
     UFUNCTION(BlueprintCallable)
+    bool LoadInteractionTable();
+
+    UFUNCTION(BlueprintCallable)
     FTD_Item& GetItemData(int index);
 
     UFUNCTION(BlueprintCallable)
     FTD_CombineItem& GetCombineItemData(int index);
+
+    UFUNCTION(BlueprintCallable)
+    FTD_Interact& GetInteractionData(int index);
 
     /*UFUNCTION(BlueprintCallable)
     UDataTable* GetItemCombineTable() { return m_CombineItemTable; }*/
@@ -82,7 +107,11 @@ private:
     UPROPERTY(EditAnywhere)
     UDataTable* m_CombineItemTable;
 
+    UPROPERTY(EditAnywhere)
+    UDataTable* m_InteractionTable;
+
     // 테이블 매니저가 들고 있을 테이블 정보
     TMap<int, FTD_Item> m_mapItems;
     TMap<int, FTD_CombineItem> m_mapCombineItems;
+    TMap<int, FTD_Interact> m_mapInteractions;
 };

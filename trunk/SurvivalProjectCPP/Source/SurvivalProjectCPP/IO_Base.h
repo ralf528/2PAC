@@ -13,7 +13,8 @@ struct FInteraction
     GENERATED_USTRUCT_BODY()
 
 public:
-    int Type;
+    int ItemType;
+    int Amount;
     int Animation;
     float castingTime;
 };
@@ -37,15 +38,18 @@ public:
 
 public:
     FInteraction GetInfo() { return info; }
-    int GetInteractionType() { return info.Type; }
+
+    int GetInteractionType() { return InteractionType; }
 
     void Execute();
+
+    void SetInteractionInfo();
 
     void SetCharacter(ASurvivalProjectCPPCharacter* character) { this->character = character; }
 	
 private:
     UPROPERTY(EditAnywhere, Blueprintable, Category = "Interaction")
-    int type;
+    int InteractionType;
 
     FInteraction info;
 
@@ -62,10 +66,10 @@ public:
 
     void Reset() { _object = nullptr; }
 
-    void Start(AIO_Base* obj, float time = 100.f)
+    void Start(AIO_Base* obj, float time = 1.5f)
     {
         _object = obj;
-		_time = time;
+		_time = time * 100.f;
     }
 
     void Complete()
