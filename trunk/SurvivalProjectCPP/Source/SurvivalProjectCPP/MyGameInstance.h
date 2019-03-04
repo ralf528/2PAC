@@ -36,10 +36,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetUIManager(AUIManager* uiManager);
 
+    UFUNCTION(BlueprintCallable)
+    void SelectCharacterType(int nType) { m_nSelectCharacterType = nType; }
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Manager", meta = (AllowPrivateAccess = "true"))
 	ADataTableManager* m_dataTableManager;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Manager", meta = (AllowPrivateAccess = "true"))
 	AUIManager* m_UIManager;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "info", meta = (AllowPrivateAccess = "true"))
+    int m_nSelectCharacterType;
 };

@@ -59,6 +59,19 @@ public:
     float CastingTime;
 };
 
+USTRUCT(BlueprintType)
+struct FTD_Character : public FTableRowBase
+{
+    GENERATED_USTRUCT_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int CharacterType;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    USkeletalMesh* SkeletalMesh;
+};
+
 UCLASS(Blueprintable)
 class SURVIVALPROJECTCPP_API ADataTableManager : public AActor
 {
@@ -88,6 +101,10 @@ public:
     bool LoadInteractionTable();
 
     UFUNCTION(BlueprintCallable)
+    bool LoadCharacterTable();
+
+    // Get Table Item
+    UFUNCTION(BlueprintCallable)
     FTD_Item& GetItemData(int index);
 
     UFUNCTION(BlueprintCallable)
@@ -96,8 +113,8 @@ public:
     UFUNCTION(BlueprintCallable)
     FTD_Interact& GetInteractionData(int index);
 
-    /*UFUNCTION(BlueprintCallable)
-    UDataTable* GetItemCombineTable() { return m_CombineItemTable; }*/
+    UFUNCTION(BlueprintCallable)
+    FTD_Character& GetCharacterData(int index);
 
 private:
     // UE4의 데이터 테이블
@@ -110,8 +127,12 @@ private:
     UPROPERTY(EditAnywhere)
     UDataTable* m_InteractionTable;
 
+    UPROPERTY(EditAnywhere)
+    UDataTable* m_CharacterTable;
+
     // 테이블 매니저가 들고 있을 테이블 정보
     TMap<int, FTD_Item> m_mapItems;
     TMap<int, FTD_CombineItem> m_mapCombineItems;
     TMap<int, FTD_Interact> m_mapInteractions;
+    TMap<int, FTD_Character> m_mapCharacters;
 };

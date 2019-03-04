@@ -6,6 +6,7 @@ UMyGameInstance::UMyGameInstance()
 {
 	m_dataTableManager = nullptr;
 	m_UIManager = nullptr;
+    m_nSelectCharacterType = 0;
 }
 
 void UMyGameInstance::Init()

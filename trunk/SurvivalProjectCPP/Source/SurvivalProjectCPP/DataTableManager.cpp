@@ -6,8 +6,12 @@
 // Sets default values
 ADataTableManager::ADataTableManager()
 {
+    ALogManager::Log(FString::Printf(TEXT("[ADataTableManager]Constructor()")));
+
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+    LoadDataTable();
 }
 
 // Called when the game starts or when spawned
@@ -23,7 +27,6 @@ void ADataTableManager::BeginPlay()
 	}
 
 	game->SetDataTableManager(this);
-	LoadDataTable();
 }
 
 // Called every frame
@@ -36,6 +39,7 @@ bool ADataTableManager::LoadDataTable()
 {
 	LoadItemTable();
     LoadInteractionTable();
+    LoadCharacterTable();
 
 	return true;
 }
@@ -77,6 +81,28 @@ bool ADataTableManager::LoadInteractionTable()
         FTD_Interact* item = m_InteractionTable->FindRow<FTD_Interact>(name, ContextString);
         if (item) {
             m_mapInteractions.Add(i, *item);
+            //UE_LOG(LogClass, Log, TEXT("[Log]Item : %d, %s"), item->, *item->Name.ToString());
+        }
+    }
+
+    return true;
+}
+
+bool ADataTableManager::LoadCharacterTable()
+{
+    if (!m_CharacterTable) {
+        UE_LOG(LogClass, Log, TEXT("[Log]Failed to load table : ItemTable"));
+        return false;
+    }
+
+    FString ContextString;
+    TArray<FName> RowNames = m_CharacterTable->GetRowNames();
+
+    int i = 0;
+    for (auto &name : RowNames) {
+        FTD_Character* item = m_CharacterTable->FindRow<FTD_Character>(name, ContextString);
+        if (item) {
+            m_mapCharacters.Add(i, *item);
             //UE_LOG(LogClass, Log, TEXT("[Log]Item : %d, %s"), item->, *item->Name.ToString());
         }
     }
@@ -144,6 +170,27 @@ FTD_Interact& ADataTableManager::GetInteractionData(int index)
     FTD_Interact* row = m_InteractionTable->FindRow<FTD_Interact>(*strIndex, strIndex);
     if (row) {
         //UE_LOG(LogClass, Log, TEXT("[Log]CombineItem Row %d = %d + %d"), row->ResultItemType, row->MaterialItemType1, row->MaterialItemType2);
+        return *row;
+    }
+
+    //return nullptr;
+    return tmp;
+}
+
+// 캐릭터 테이블 데이터 반환
+FTD_Character& ADataTableManager::GetCharacterData(int index)
+{
+    FTD_Character tmp;
+
+    if (!m_CharacterTable) {
+        UE_LOG(LogClass, Log, TEXT("[TableManager]Invalid CharacterTable"), );
+        return tmp;
+    }
+
+    FString strIndex = FString::FromInt(index);
+    FTD_Character* row = m_CharacterTable->FindRow<FTD_Character>(*strIndex, strIndex);
+    if (row) {
+        ALogManager::Log(FString::Printf(TEXT("[Log]Find Character")));
         return *row;
     }
 
