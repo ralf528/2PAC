@@ -19,7 +19,7 @@ public:
     float castingTime;
 };
 
-UCLASS()
+UCLASS(Blueprintable)
 class SURVIVALPROJECTCPP_API AIO_Base : public AActor
 {
 	GENERATED_BODY()
@@ -39,6 +39,7 @@ public:
 public:
     FInteraction GetInfo() { return info; }
 
+    UFUNCTION(BlueprintCallable)
     int GetInteractionType() { return InteractionType; }
 
     void Execute();
@@ -46,9 +47,10 @@ public:
     void SetInteractionInfo();
 
     void SetCharacter(ASurvivalProjectCPPCharacter* character) { this->character = character; }
-	
+
 private:
-    UPROPERTY(EditAnywhere, Blueprintable, Category = "Interaction")
+    UPROPERTY(EditAnywhere, Category = "Interaction")
+    //UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
     int InteractionType;
 
     FInteraction info;

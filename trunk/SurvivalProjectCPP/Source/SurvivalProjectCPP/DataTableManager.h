@@ -22,6 +22,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     UTexture2D* Image;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UStaticMesh* Mesh;
 };
 
 USTRUCT(BlueprintType)
