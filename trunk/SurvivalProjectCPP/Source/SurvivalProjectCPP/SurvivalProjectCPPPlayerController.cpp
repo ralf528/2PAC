@@ -134,14 +134,14 @@ void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
     static const float interactionDistance = 200.f;
 
     FHitResult Hit;
-    GetHitResultUnderCursor(ECC_WorldDynamic, false, Hit);
+    GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
     if (Hit.bBlockingHit)
     {
         AActor* hitActor = Hit.GetActor();
 
         if (hitActor) {
-            ALogManager::Log(FString::Printf(TEXT("[Log]Actor(%d) Name:%s"), ECC_WorldDynamic, *hitActor->GetName()));
+            ALogManager::Log(FString::Printf(TEXT("[Log]Actor(%d) Name:%s"), ECC_Visibility, *hitActor->GetName()));
 
             APawn* myPawn = GetPawn();
             if (!myPawn) {
