@@ -38,7 +38,16 @@ void AIO_Base::Execute()
     {*/
         if (character) {
             character->AddItemToInventory(info.ItemType, info.Amount);
+            FVector Location = GetActorLocation();
+            FRotator Rotation(0.f, 0.f, 0.f);
+
+            // 제자리에 아이템 드랍
+            AIO_Base* obj = GetWorld()->SpawnActor<AIO_Base>(IO_Blueprint, Location, Rotation);
+            if (obj) {
+                obj->SetInteractionType(1);
+            }
             this->Destroy();
+
         }
     /*}
     break;

@@ -42,6 +42,9 @@ public:
     UFUNCTION(BlueprintCallable)
     int GetInteractionType() { return InteractionType; }
 
+    UFUNCTION(BlueprintCallable)
+    void SetInteractionType(int type) { InteractionType = type; }
+
     void Execute();
 
     void SetInteractionInfo();
@@ -56,6 +59,9 @@ private:
     FInteraction info;
 
     ASurvivalProjectCPPCharacter* character;
+
+    UPROPERTY(EditAnywhere)
+    TSubclassOf<AIO_Base> IO_Blueprint;
 };
 
 USTRUCT()
