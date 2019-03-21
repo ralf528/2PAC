@@ -42,12 +42,26 @@ void AIO_Base::Execute()
             FRotator Rotation(0.f, 0.f, 0.f);
 
             // 제자리에 아이템 드랍
-            AIO_Base* obj = GetWorld()->SpawnActor<AIO_Base>(IO_Blueprint, Location, Rotation);
-            if (obj) {
-                obj->SetInteractionType(1);
+            UMyGameInstance* game = dynamic_cast<UMyGameInstance*>(GetGameInstance());
+            if (game) {
+                if (game->GetDataTableManager()) {
+                    FTD_Interact& interaction = game->GetDataTableManager()->GetInteractionData(InteractionType);
+                    ALogManager::Log(FString::Printf(TEXT("[IO_BASE]Interaction item type[%d]"), interaction.ItemType));
+                    if (interaction.ItemType != 0) {
+                        int drop = game->GetDataTableManager()->FindDropItem(interaction.ItemType);
+                        ALogManager::Log(FString::Printf(TEXT("[IO_BASE]Drop item type[%d]"), drop));
+
+                        if (drop != 0) {
+                            AIO_Base* obj = GetWorld()->SpawnActor<AIO_Base>(IO_Blueprint, Location, Rotation);
+                            if (obj) {
+                                obj->SetInteractionType(drop);
+                                obj->SetItemStaticMesh();
+                            }
+                        }
+                    }
+                }
             }
             this->Destroy();
-
         }
     /*}
     break;
@@ -88,6 +102,39 @@ void AIO_Base::SetInteractionInfo()
         }
         else {
             ALogManager::Log(FString::Printf(TEXT("[IO_BASE]Invalid GameInstance")));
+        }
+    }
+}
+
+void AIO_Base::SetItemStaticMesh()
+{
+    if (!m_meshComponent) {
+        if (GetRootComponent()) {
+            TArray<USceneComponent*> components;
+            GetRootComponent()->GetChildrenComponents(false, components);
+            for (auto &info : components) {
+                if (info->GetName().Compare("StaticMesh") == 0) {
+                    m_meshComponent = dynamic_cast<UStaticMeshComponent*>(info);
+
+                    if (!m_meshComponent) {
+                        ALogManager::Log(FString::Printf(TEXT("[AIO_Base]NotFound Static Mesh Component")));
+                    }
+                }
+            }
+        }
+    }
+
+    if (m_meshComponent) {
+        UMyGameInstance* game = dynamic_cast<UMyGameInstance*>(GetGameInstance());
+        if (game) {
+            if (game->GetDataTableManager()) {
+
+                FTD_Interact& interaction = game->GetDataTableManager()->GetInteractionData(InteractionType);
+
+                FTD_Item& item = game->GetDataTableManager()->GetItemData(interaction.ItemType);
+
+                m_meshComponent->SetStaticMesh(item.Mesh);
+            }
         }
     }
 }

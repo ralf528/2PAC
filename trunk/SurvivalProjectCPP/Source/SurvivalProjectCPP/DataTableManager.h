@@ -75,6 +75,22 @@ public:
     USkeletalMesh* SkeletalMesh;
 };
 
+USTRUCT(BlueprintType)
+struct FTD_ItemDrop : public FTableRowBase
+{
+    GENERATED_USTRUCT_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int ItemType;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int DropItemType;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int DropItemCount;
+};
+
 UCLASS(Blueprintable)
 class SURVIVALPROJECTCPP_API ADataTableManager : public AActor
 {
@@ -106,6 +122,9 @@ public:
     UFUNCTION(BlueprintCallable)
     bool LoadCharacterTable();
 
+    UFUNCTION(BlueprintCallable)
+    bool LoadItemDropTable();
+
     // Get Table Item
     UFUNCTION(BlueprintCallable)
     FTD_Item& GetItemData(int index);
@@ -118,6 +137,12 @@ public:
 
     UFUNCTION(BlueprintCallable)
     FTD_Character& GetCharacterData(int index);
+
+    UFUNCTION(BlueprintCallable)
+    FTD_ItemDrop& GetItemDropData(int index);
+
+    UFUNCTION(BlueprintCallable)
+    int FindDropItem(int sourceItem);
 
 private:
     // UE4의 데이터 테이블
@@ -133,9 +158,13 @@ private:
     UPROPERTY(EditAnywhere)
     UDataTable* m_CharacterTable;
 
+    UPROPERTY(EditAnywhere)
+    UDataTable* m_ItemDropTable;
+
     // 테이블 매니저가 들고 있을 테이블 정보
     TMap<int, FTD_Item> m_mapItems;
     TMap<int, FTD_CombineItem> m_mapCombineItems;
     TMap<int, FTD_Interact> m_mapInteractions;
     TMap<int, FTD_Character> m_mapCharacters;
+    TMap<int, FTD_ItemDrop> m_mapItemDrops;
 };

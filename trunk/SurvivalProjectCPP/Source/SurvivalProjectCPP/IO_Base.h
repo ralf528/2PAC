@@ -51,6 +51,9 @@ public:
 
     void SetCharacter(ASurvivalProjectCPPCharacter* character) { this->character = character; }
 
+    UFUNCTION(BlueprintCallable)
+    void SetItemStaticMesh();
+
 private:
     UPROPERTY(EditAnywhere, Category = "Interaction")
     //UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
@@ -62,6 +65,9 @@ private:
 
     UPROPERTY(EditAnywhere)
     TSubclassOf<AIO_Base> IO_Blueprint;
+
+    UPROPERTY(EditAnywhere)
+    UStaticMeshComponent* m_meshComponent;
 };
 
 USTRUCT()

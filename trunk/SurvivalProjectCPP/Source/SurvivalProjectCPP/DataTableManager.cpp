@@ -10,8 +10,6 @@ ADataTableManager::ADataTableManager()
 
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-    LoadDataTable();
 }
 
 // Called when the game starts or when spawned
@@ -27,6 +25,7 @@ void ADataTableManager::BeginPlay()
 	}
 
 	game->SetDataTableManager(this);
+    LoadDataTable();
 }
 
 // Called every frame
@@ -40,6 +39,7 @@ bool ADataTableManager::LoadDataTable()
 	LoadItemTable();
     LoadInteractionTable();
     LoadCharacterTable();
+    LoadItemDropTable();
 
 	return true;
 }
@@ -110,6 +110,27 @@ bool ADataTableManager::LoadCharacterTable()
     return true;
 }
 
+bool ADataTableManager::LoadItemDropTable()
+{
+    if (!m_ItemDropTable) {
+        UE_LOG(LogClass, Log, TEXT("[Log]Failed to load table : ItemDrop"));
+        return false;
+    }
+
+    FString ContextString;
+    TArray<FName> RowNames = m_ItemDropTable->GetRowNames();
+
+    int i = 0;
+    for (auto &name : RowNames) {
+        FTD_ItemDrop* item = m_ItemDropTable->FindRow<FTD_ItemDrop>(name, ContextString);
+        if (item) {
+            m_mapItemDrops.Add(i++, *item);
+        }
+    }
+
+    return true;
+}
+
 // 아이템 테이블의 데이터를 반환
 FTD_Item& ADataTableManager::GetItemData(int index)
 {
@@ -131,7 +152,7 @@ FTD_Item& ADataTableManager::GetItemData(int index)
     }
 
     //return nullptr;
-    UE_LOG(LogClass, Log, TEXT("[Log]failed to return ItemData"));
+    UE_LOG(LogClass, Log, TEXT("[Log]failed to return ItemData[%d]"), index);
     return tmp;
 }
 
@@ -162,16 +183,18 @@ FTD_Interact& ADataTableManager::GetInteractionData(int index)
     FTD_Interact tmp;
 
     if (!m_InteractionTable) {
-        UE_LOG(LogClass, Log, TEXT("[TableManager]Invalid InteractionTable"),);
+        UE_LOG(LogClass, Log, TEXT("[TableManager]Invalid InteractionTable"));
         return tmp;
     }
 
     FString strIndex = FString::FromInt(index);
     FTD_Interact* row = m_InteractionTable->FindRow<FTD_Interact>(*strIndex, strIndex);
-    if (row) {
-        //UE_LOG(LogClass, Log, TEXT("[Log]CombineItem Row %d = %d + %d"), row->ResultItemType, row->MaterialItemType1, row->MaterialItemType2);
+    if (row != nullptr) {
+        //UE_LOG(LogClass, Log, TEXT("[Log]Interaction Row [%d]"), row->ItemType);
         return *row;
     }
+
+    UE_LOG(LogClass, Log, TEXT("[Log]Failed to Interaction Row[%d]"), index);
 
     //return nullptr;
     return tmp;
@@ -183,7 +206,7 @@ FTD_Character& ADataTableManager::GetCharacterData(int index)
     FTD_Character tmp;
 
     if (!m_CharacterTable) {
-        UE_LOG(LogClass, Log, TEXT("[TableManager]Invalid CharacterTable"), );
+        UE_LOG(LogClass, Log, TEXT("[TableManager]Invalid CharacterTable"));
         return tmp;
     }
 
@@ -196,4 +219,38 @@ FTD_Character& ADataTableManager::GetCharacterData(int index)
 
     //return nullptr;
     return tmp;
+}
+
+// 아이템 드랍 데이터 반환
+FTD_ItemDrop& ADataTableManager::GetItemDropData(int index)
+{
+    FTD_ItemDrop tmp;
+
+    if (!m_ItemDropTable) {
+        UE_LOG(LogClass, Log, TEXT("[TableManager]Invalid ItemDropTable"));
+        return tmp;
+    }
+
+    FString strIndex = FString::FromInt(index);
+    FTD_ItemDrop* row = m_ItemDropTable->FindRow<FTD_ItemDrop>(*strIndex, strIndex);
+    if (row) {
+        return *row;
+    }
+
+    return tmp;
+}
+
+// 드랍 아이템 정보
+int ADataTableManager::FindDropItem(int sourceItem)
+{
+    for (auto &info : m_mapItemDrops) {
+        UE_LOG(LogClass, Log, TEXT("[TableManager]Find Drop Item [%d]"), info.Value.ItemType);
+        if (info.Value.ItemType == sourceItem)
+        {
+            return info.Value.DropItemType;
+        }
+    }
+
+    UE_LOG(LogClass, Log, TEXT("[TableManager]NotFound Drop Item [sourceItem : %d]"), sourceItem);
+    return 0;
 }
