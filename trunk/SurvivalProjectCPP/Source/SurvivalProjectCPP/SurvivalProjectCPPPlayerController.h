@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Util_Interaction.h"
 #include "IO_Base.h"
 #include "ExternHeader.h"
 #include "SurvivalProjectCPPPlayerController.generated.h"
@@ -56,9 +57,6 @@ protected:
 	void RotationTo(const FVector& dest);
 
 private:
-    /*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MyUnit", meta = (AllowPrivateAccess = "true"))
-    bool m_bInteracting;*/
-
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MyUnit", meta = (AllowPrivateAccess = "true"))
     float m_InteractionTime;
 

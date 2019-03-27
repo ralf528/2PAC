@@ -19,6 +19,8 @@ public:
     float castingTime;
 };
 
+class AItem_Base;
+
 UCLASS(Blueprintable)
 class SURVIVALPROJECTCPP_API AIO_Base : public AActor
 {
@@ -49,8 +51,6 @@ public:
 
     void SetInteractionInfo();
 
-    void SetCharacter(ASurvivalProjectCPPCharacter* character) { this->character = character; }
-
     UFUNCTION(BlueprintCallable)
     void SetItemStaticMesh();
 
@@ -61,48 +61,9 @@ private:
 
     FInteraction info;
 
-    ASurvivalProjectCPPCharacter* character;
-
     UPROPERTY(EditAnywhere)
-    TSubclassOf<AIO_Base> IO_Blueprint;
+    TSubclassOf<AItem_Base> Item_Blueprint;
 
     UPROPERTY(EditAnywhere)
     UStaticMeshComponent* m_meshComponent;
-};
-
-USTRUCT()
-struct FInteractor
-{
-    GENERATED_USTRUCT_BODY()
-
-public:
-    FInteractor() : _object(nullptr) {}
-
-    void Reset() { _object = nullptr; }
-
-    void Start(AIO_Base* obj, float time = 1.5f)
-    {
-        _object = obj;
-		_time = time * 100.f;
-    }
-
-    void Complete()
-    {
-        if (_object) {
-            _object->Execute();
-        }
-        Reset();
-    }
-
-public:
-    AIO_Base* GetObject() { return _object; }
-
-    bool IsInteracting() { return (_object != nullptr); }
-
-	void SetTime(float time) { _time = time; }
-	float GetTime() { return _time; }
-
-private:
-    AIO_Base* _object;
-	float _time;
 };

@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "IO_Base.h"
+#include "Item_Base.h"
 #include "MyGameInstance.h"
 #include "LogManager.h"
 
@@ -33,46 +34,29 @@ void AIO_Base::Tick(float DeltaTime)
 
 void AIO_Base::Execute()
 {
-    /*switch (info.ItemType) {
-    case 1:
-    {*/
-        if (character) {
-            character->AddItemToInventory(info.ItemType, info.Amount);
-            FVector Location = GetActorLocation();
-            FRotator Rotation(0.f, 0.f, 0.f);
+    // 제자리에 아이템 드랍
+    UMyGameInstance* game = dynamic_cast<UMyGameInstance*>(GetGameInstance());
+    if (game) {
+        if (game->GetDataTableManager()) {
+            FTD_Interact& interaction = game->GetDataTableManager()->GetInteractionData(InteractionType);
+            ALogManager::Log(FString::Printf(TEXT("[IO_BASE]Interaction item type[%d]"), interaction.ItemType));
+            if (interaction.ItemType != 0) {
+                int drop = game->GetDataTableManager()->FindDropItem(interaction.ItemType);
+                ALogManager::Log(FString::Printf(TEXT("[IO_BASE]Drop item type[%d]"), drop));
 
-            // 제자리에 아이템 드랍
-            UMyGameInstance* game = dynamic_cast<UMyGameInstance*>(GetGameInstance());
-            if (game) {
-                if (game->GetDataTableManager()) {
-                    FTD_Interact& interaction = game->GetDataTableManager()->GetInteractionData(InteractionType);
-                    ALogManager::Log(FString::Printf(TEXT("[IO_BASE]Interaction item type[%d]"), interaction.ItemType));
-                    if (interaction.ItemType != 0) {
-                        int drop = game->GetDataTableManager()->FindDropItem(interaction.ItemType);
-                        ALogManager::Log(FString::Printf(TEXT("[IO_BASE]Drop item type[%d]"), drop));
-
-                        if (drop != 0) {
-                            AIO_Base* obj = GetWorld()->SpawnActor<AIO_Base>(IO_Blueprint, Location, Rotation);
-                            if (obj) {
-                                obj->SetInteractionType(drop);
-                                obj->SetItemStaticMesh();
-                            }
-                        }
+                if (drop != 0) {
+                    FVector Location = GetActorLocation();
+                    FRotator Rotation(0.f, 0.f, 0.f);
+                    AItem_Base* obj = GetWorld()->SpawnActor<AItem_Base>(Item_Blueprint, Location, Rotation);
+                    if (obj) {
+                        //obj->SetInteractionType(drop);
+                        obj->SetItemStaticMesh();
                     }
                 }
             }
-            this->Destroy();
         }
-    /*}
-    break;
-
-    default:
-    {
-        this->Destroy();
     }
-    break;
-
-    }*/
+    this->Destroy();
 }
 
 void AIO_Base::SetInteractionInfo()

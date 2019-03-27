@@ -6,6 +6,7 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "SurvivalProjectCPPCharacter.h"
 #include "LogManager.h"
+#include "Item_base.h"
 #include "Engine/World.h"
 
 ASurvivalProjectCPPPlayerController::ASurvivalProjectCPPPlayerController()
@@ -143,25 +144,30 @@ void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
         if (hitActor) {
             ALogManager::Log(FString::Printf(TEXT("[Log]Actor(%d) Name:%s"), ECC_Visibility, *hitActor->GetName()));
 
-            APawn* myPawn = GetPawn();
-            if (!myPawn) {
-                ALogManager::Log(TEXT("[Log]myPawn is nullptr"));
-                return;
-            }
-
-            float distance = FMath::Abs(FVector::Dist(myPawn->GetActorLocation(), hitActor->GetActorLocation()));
+            float distance = FMath::Abs(FVector::Dist(hitActor->GetActorLocation(), hitActor->GetActorLocation()));
             ALogManager::Log(FString::Printf(TEXT("[Log]distance : %f"), distance));
             if (distance > interactionDistance) {
                 return;
             }
 
             AIO_Base* comp = dynamic_cast<AIO_Base*>(hitActor);
+            ASurvivalProjectCPPCharacter* character = dynamic_cast<ASurvivalProjectCPPCharacter*>(GetPawn());
             if (comp) {
-                ASurvivalProjectCPPCharacter* character = dynamic_cast<ASurvivalProjectCPPCharacter*>(GetPawn());
-                comp->SetCharacter(character);
+                //comp->SetCharacter(character);
                 comp->SetInteractionInfo(); //< 시작할때 Set 하고 싶지만 우선 여기서..
                 m_Interactor.Start(comp, comp->GetInfo().castingTime);
+                m_Interactor.SetCharacter(character);
                 m_InteractionType = (E_BehaviorType)comp->GetInfo().Animation;
+            }
+            else {
+                AItem_Base* item = dynamic_cast<AItem_Base*>(hitActor);
+                if (item) {
+                    ALogManager::Log(TEXT("[Log]Get Item"));
+
+                    m_Interactor.Start(item);
+                    m_Interactor.SetCharacter(character);
+                    m_InteractionType = E_BehaviorType::e_BehaviorPickUp;
+                }
             }
 
 			RotationTo(hitActor->GetActorLocation());
