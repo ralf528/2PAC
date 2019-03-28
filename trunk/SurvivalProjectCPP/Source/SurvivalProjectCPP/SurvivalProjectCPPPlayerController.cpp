@@ -157,7 +157,7 @@ void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
                 comp->SetInteractionInfo(); //< 시작할때 Set 하고 싶지만 우선 여기서..
                 m_Interactor.Start(comp, comp->GetInfo().castingTime);
                 m_Interactor.SetCharacter(character);
-                m_InteractionType = (E_BehaviorType)comp->GetInfo().Animation;
+                m_InteractionType = (E_BehaviorType)comp->GetInfo().Tool;
             }
             else {
                 AItem_Base* item = dynamic_cast<AItem_Base*>(hitActor);

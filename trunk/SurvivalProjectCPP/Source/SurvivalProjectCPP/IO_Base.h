@@ -13,9 +13,7 @@ struct FInteraction
     GENERATED_USTRUCT_BODY()
 
 public:
-    int ItemType;
-    int Amount;
-    int Animation;
+    int Tool;
     float castingTime;
 };
 
@@ -52,7 +50,7 @@ public:
     void SetInteractionInfo();
 
     UFUNCTION(BlueprintCallable)
-    void SetItemStaticMesh();
+    void SetStaticMesh();
 
 private:
     UPROPERTY(EditAnywhere, Category = "Interaction")

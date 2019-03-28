@@ -19,10 +19,8 @@ void AIO_Base::BeginPlay()
 
 	Super::BeginPlay();
 
-    info.ItemType = FMath::RandRange(1, 4);
-    info.Amount = 1;
-    info.Animation = 4;
-    info.castingTime = 1.f;
+    SetInteractionInfo();
+    SetStaticMesh();
 }
 
 // Called every frame
@@ -39,9 +37,9 @@ void AIO_Base::Execute()
     if (game) {
         if (game->GetDataTableManager()) {
             FTD_Interact& interaction = game->GetDataTableManager()->GetInteractionData(InteractionType);
-            ALogManager::Log(FString::Printf(TEXT("[IO_BASE]Interaction item type[%d]"), interaction.ItemType));
-            if (interaction.ItemType != 0) {
-                int drop = game->GetDataTableManager()->FindDropItem(interaction.ItemType);
+
+            if (interaction.DropGroup != 0) {
+                int drop = game->GetDataTableManager()->FindDropItem(interaction.DropGroup);
                 ALogManager::Log(FString::Printf(TEXT("[IO_BASE]Drop item type[%d]"), drop));
 
                 if (drop != 0) {
@@ -49,7 +47,7 @@ void AIO_Base::Execute()
                     FRotator Rotation(0.f, 0.f, 0.f);
                     AItem_Base* obj = GetWorld()->SpawnActor<AItem_Base>(Item_Blueprint, Location, Rotation);
                     if (obj) {
-                        //obj->SetInteractionType(drop);
+                        obj->SetItemType(drop);
                         obj->SetItemStaticMesh();
                     }
                 }
@@ -64,9 +62,7 @@ void AIO_Base::SetInteractionInfo()
     // type != 0 이면 interaction table 의 값으로 설정
     // 우선은 아이템 타입을 랜덤으로
     if (InteractionType == 0) {
-        info.ItemType = FMath::RandRange(1, 4);
-        info.Amount = 1;
-        info.Animation = 1;
+        info.Tool = 1;
         info.castingTime = 1.f;
     }
     else {
@@ -74,11 +70,9 @@ void AIO_Base::SetInteractionInfo()
         if (game) {
             if (game->GetDataTableManager()) {
                 FTD_Interact& info = game->GetDataTableManager()->GetInteractionData(InteractionType);
-                this->info.ItemType = info.ItemType;
-                this->info.Amount = info.ItemCount;
-                this->info.Animation = info.Animation;
+                this->info.Tool = info.UseTool;
                 this->info.castingTime = info.CastingTime;
-                ALogManager::Log(FString::Printf(TEXT("[IO_BASE]item %d, amount %d, animation %d, time %f"), this->info.ItemType, this->info.Amount, this->info.Animation, this->info.castingTime));
+                ALogManager::Log(FString::Printf(TEXT("[IO_BASE]type %d, Tool %d, time %f"), InteractionType, this->info.Tool, this->info.castingTime));
             }
             else {
                 ALogManager::Log(FString::Printf(TEXT("[IO_BASE]Invalid TableManager")));
@@ -90,7 +84,7 @@ void AIO_Base::SetInteractionInfo()
     }
 }
 
-void AIO_Base::SetItemStaticMesh()
+void AIO_Base::SetStaticMesh()
 {
     if (!m_meshComponent) {
         if (GetRootComponent()) {
@@ -115,9 +109,9 @@ void AIO_Base::SetItemStaticMesh()
 
                 FTD_Interact& interaction = game->GetDataTableManager()->GetInteractionData(InteractionType);
 
-                FTD_Item& item = game->GetDataTableManager()->GetItemData(interaction.ItemType);
-
-                m_meshComponent->SetStaticMesh(item.Mesh);
+                if (interaction.Mesh != nullptr) {
+                    m_meshComponent->SetStaticMesh(interaction.Mesh);
+                }
             }
         }
     }

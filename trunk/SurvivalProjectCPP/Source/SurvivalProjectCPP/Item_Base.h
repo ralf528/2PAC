@@ -26,6 +26,7 @@ public:
 public:
     void SetItemStaticMesh();
 
+    void SetItemType(int nType) { m_itemType = nType; }
     int GetItemType() { return m_itemType; }
 
 private:

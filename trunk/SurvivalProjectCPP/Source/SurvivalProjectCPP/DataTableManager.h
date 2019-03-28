@@ -48,18 +48,26 @@ struct FTD_Interact : public FTableRowBase
 {
     GENERATED_USTRUCT_BODY()
 public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FName Name;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int ItemType;
+    FName Desc;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int ItemCount;
+    UStaticMesh* Mesh;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int Animation;
+    int MaxHP;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int UseTool;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float CastingTime;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int DropGroup;
 };
 
 USTRUCT(BlueprintType)
@@ -142,7 +150,7 @@ public:
     FTD_ItemDrop& GetItemDropData(int index);
 
     UFUNCTION(BlueprintCallable)
-    int FindDropItem(int sourceItem);
+    int FindDropItem(int nGroupIndex);
 
 private:
     // UE4의 데이터 테이블

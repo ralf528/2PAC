@@ -241,16 +241,16 @@ FTD_ItemDrop& ADataTableManager::GetItemDropData(int index)
 }
 
 // 드랍 아이템 정보
-int ADataTableManager::FindDropItem(int sourceItem)
+int ADataTableManager::FindDropItem(int nGroupIndex)
 {
     for (auto &info : m_mapItemDrops) {
         UE_LOG(LogClass, Log, TEXT("[TableManager]Find Drop Item [%d]"), info.Value.ItemType);
-        if (info.Value.ItemType == sourceItem)
+        if (info.Value.ItemType == nGroupIndex)
         {
             return info.Value.DropItemType;
         }
     }
 
-    UE_LOG(LogClass, Log, TEXT("[TableManager]NotFound Drop Item [sourceItem : %d]"), sourceItem);
+    UE_LOG(LogClass, Log, TEXT("[TableManager]NotFound Drop Item [GroupIndex : %d]"), nGroupIndex);
     return 0;
 }
