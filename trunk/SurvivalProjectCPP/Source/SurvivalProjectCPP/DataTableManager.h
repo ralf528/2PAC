@@ -15,16 +15,34 @@ struct FTD_Item : public FTableRowBase
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int ItemType;
+    int Index;  // 인덱스
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FName Name;
+    FName Name; // 이름
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    UTexture2D* Image;
+    UTexture2D* Image;  // 아이콘
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    UStaticMesh* Mesh;
+    UStaticMesh* Mesh;  // 메쉬
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int MaxHP;  // 내구도
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int DecHP;  // 내구도 감소량
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool NoBreak;   // 파괴 여부
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int MaxCount;   // 최대 개수
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int Skill;  // 스킬 정보
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int EquipSlot;  // 장비 슬롯
 };
 
 USTRUCT(BlueprintType)
@@ -89,14 +107,21 @@ struct FTD_ItemDrop : public FTableRowBase
     GENERATED_USTRUCT_BODY()
 
 public:
+    //Drop Group Index,	type(스탯/아이템 등), 드랍할 아이템 Index,	개수,	확률 등..
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int ItemType;
+    int DropGroupIndex;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int DropItemType;
+    int DropType;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int DropItemIndex;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int DropItemCount;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int DropProbability;
 };
 
 UCLASS(Blueprintable)

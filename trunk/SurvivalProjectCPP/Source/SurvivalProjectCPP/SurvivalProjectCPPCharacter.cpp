@@ -106,10 +106,10 @@ void ASurvivalProjectCPPCharacter::PostInitProperties()
     AddItemToInventory(2, 2);
     AddItemToInventory(3, 3);
     AddItemToInventory(4, 4);
-    AddItemToInventory(0, 0);
-    AddItemToInventory(0, 0);
-    AddItemToInventory(0, 0);
-    AddItemToInventory(0, 0);
+    AddItemToInventory(5, 0);
+    AddItemToInventory(6, 0);
+    AddItemToInventory(7, 0);
+    AddItemToInventory(8, 0);
     AddItemToInventory(0, 0);
     AddItemToInventory(0, 0);
     AddItemToInventory(0, 0);

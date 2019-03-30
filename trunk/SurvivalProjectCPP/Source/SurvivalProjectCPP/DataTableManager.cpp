@@ -59,7 +59,7 @@ bool ADataTableManager::LoadItemTable()
 		FTD_Item* item = m_ItemTable->FindRow<FTD_Item>(name, ContextString);
 		if (item) {
 			m_mapItems.Add(i, *item);
-			UE_LOG(LogClass, Log, TEXT("[Log]Item : %d, %s"), item->ItemType, *item->Name.ToString());
+			UE_LOG(LogClass, Log, TEXT("[Log]Item : %d, %s"), item->Index, *item->Name.ToString());
 		}
 	}
 
@@ -135,7 +135,7 @@ bool ADataTableManager::LoadItemDropTable()
 FTD_Item& ADataTableManager::GetItemData(int index)
 {
     FTD_Item tmp;
-    tmp.ItemType = 0;
+    tmp.Index = 0;
     if (!m_ItemTable) {
         //return nullptr;
         UE_LOG(LogClass, Log, TEXT("[Log]ItemTable is nullptr"));
@@ -244,10 +244,10 @@ FTD_ItemDrop& ADataTableManager::GetItemDropData(int index)
 int ADataTableManager::FindDropItem(int nGroupIndex)
 {
     for (auto &info : m_mapItemDrops) {
-        UE_LOG(LogClass, Log, TEXT("[TableManager]Find Drop Item [%d]"), info.Value.ItemType);
-        if (info.Value.ItemType == nGroupIndex)
+        UE_LOG(LogClass, Log, TEXT("[TableManager]Find Drop Item [%d]"), info.Value.DropGroupIndex);
+        if (info.Value.DropGroupIndex == nGroupIndex)
         {
-            return info.Value.DropItemType;
+            return info.Value.DropItemIndex;
         }
     }
 
