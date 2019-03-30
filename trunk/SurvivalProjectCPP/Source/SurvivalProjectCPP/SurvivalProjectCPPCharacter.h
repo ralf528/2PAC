@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "ExternHeader.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "SurvivalProjectCPPCharacter.generated.h"
@@ -86,6 +87,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "MyUnit")
     int GetNextEmptySlot();
 
+    UFUNCTION(BlueprintCallable, Category = "MyUnit")
+    int GetEquipTool() { return m_equipTool; }
+
 	// ui
 	void OnOffWidget(E_UI eUI);
 
@@ -118,4 +122,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MyUnit", meta = (AllowPrivateAccess = "true"))
 	TArray<int> m_QuickSlot;
+
+    UPROPERTY(EditAnywhere, Category = "MyUnit")
+    int m_equipTool;
 };

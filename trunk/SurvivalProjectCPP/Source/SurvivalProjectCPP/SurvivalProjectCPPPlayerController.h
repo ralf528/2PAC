@@ -10,6 +10,7 @@
 #include "SurvivalProjectCPPPlayerController.generated.h"
 
 class AIO_Base;
+class ASurvivalProjectCPPCharacter;
 
 UCLASS()
 class ASurvivalProjectCPPPlayerController : public APlayerController
@@ -65,6 +66,8 @@ private:
     FInteractor m_Interactor;
 
     E_BehaviorType m_InteractionType;
+
+    ASurvivalProjectCPPCharacter* m_Character;
 };
 
 

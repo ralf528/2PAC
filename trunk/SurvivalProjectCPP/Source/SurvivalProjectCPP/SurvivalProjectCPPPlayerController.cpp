@@ -15,6 +15,8 @@ ASurvivalProjectCPPPlayerController::ASurvivalProjectCPPPlayerController()
     DefaultMouseCursor = EMouseCursor::Crosshairs;
     m_InteractionTime = 0.f;
     m_Interactor.Reset();
+
+    m_Character = nullptr;
 }
 
 void ASurvivalProjectCPPPlayerController::PlayerTick(float DeltaTime)
@@ -35,6 +37,11 @@ void ASurvivalProjectCPPPlayerController::PlayerTick(float DeltaTime)
             m_Interactor.Complete();
             m_InteractionType = E_BehaviorType::e_BehaviorNone;
         }
+    }
+
+    m_Character = dynamic_cast<ASurvivalProjectCPPCharacter*>(GetPawn());
+    if (!m_Character) {
+        ALogManager::Log(TEXT("[ERROR]SurvivalProjectCPPPlayerController : character is nullptr"));
     }
 }
 
@@ -151,13 +158,19 @@ void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
             }
 
             AIO_Base* comp = dynamic_cast<AIO_Base*>(hitActor);
-            ASurvivalProjectCPPCharacter* character = dynamic_cast<ASurvivalProjectCPPCharacter*>(GetPawn());
             if (comp) {
-                //comp->SetCharacter(character);
-                comp->SetInteractionInfo(); //< 시작할때 Set 하고 싶지만 우선 여기서..
-                m_Interactor.Start(comp, comp->GetInfo().castingTime);
-                m_Interactor.SetCharacter(character);
-                m_InteractionType = (E_BehaviorType)comp->GetInfo().Tool;
+                bool bSkip = false;
+                if (comp->GetInfo().Tool != 0) {
+                    if (m_Character->GetEquipTool() != comp->GetInfo().Tool) {
+                        bSkip = true;   // 착용 장비가 인터렉션 불가능한 경우
+                    }
+                }
+                if (bSkip == false) {
+                    //comp->SetInteractionInfo(); //< 시작할때 Set 하고 싶지만 우선 여기서..
+                    m_Interactor.Start(comp, comp->GetInfo().castingTime);
+                    m_Interactor.SetCharacter(m_Character);
+                    m_InteractionType = (E_BehaviorType)comp->GetInfo().Tool;
+                }
             }
             else {
                 AItem_Base* item = dynamic_cast<AItem_Base*>(hitActor);
@@ -165,7 +178,7 @@ void ASurvivalProjectCPPPlayerController::CheckInteractionObject()
                     ALogManager::Log(TEXT("[Log]Get Item"));
 
                     m_Interactor.Start(item);
-                    m_Interactor.SetCharacter(character);
+                    m_Interactor.SetCharacter(m_Character);
                     m_InteractionType = E_BehaviorType::e_BehaviorPickUp;
                 }
             }
