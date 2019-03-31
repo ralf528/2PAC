@@ -26,6 +26,11 @@ class ASurvivalProjectCPPCharacter : public ACharacter
 public:
 	ASurvivalProjectCPPCharacter();
 
+protected:
+    // Called when the game starts or when spawned
+    virtual void BeginPlay() override;
+
+public:
 	// Called every frame.
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -87,8 +92,12 @@ public:
     UFUNCTION(BlueprintCallable, Category = "MyUnit")
     int GetNextEmptySlot();
 
-    UFUNCTION(BlueprintCallable, Category = "MyUnit")
+    // Equipment
+    UFUNCTION(BlueprintCallable, Category = "Equipment")
     int GetEquipTool() { return m_equipTool; }
+
+    UFUNCTION(BlueprintCallable, Category = "Equipment")
+    void AttachmentWeapon(int itemIndex);
 
 	// ui
 	void OnOffWidget(E_UI eUI);
@@ -122,6 +131,12 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MyUnit", meta = (AllowPrivateAccess = "true"))
 	TArray<int> m_QuickSlot;
+
+    UPROPERTY(VisibleAnywhere, Category = Weapon)
+    UStaticMeshComponent* m_Weapon;
+
+    UPROPERTY(EditAnywhere, Category = Weapon)
+    UStaticMesh* m_WeaponMesh;
 
     UPROPERTY(EditAnywhere, Category = "MyUnit")
     int m_equipTool;

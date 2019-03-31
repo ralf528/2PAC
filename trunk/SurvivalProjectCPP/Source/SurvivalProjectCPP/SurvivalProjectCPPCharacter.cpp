@@ -15,6 +15,7 @@
 #include "MyGameInstance.h"
 #include "Engine/World.h"
 #include "UserWidget.h"
+#include "DataTableManager.h"
 
 const int gb_nMaxInvenSlot = 16;
 const int gb_nMaxQuickSlot = 8;
@@ -62,6 +63,16 @@ ASurvivalProjectCPPCharacter::ASurvivalProjectCPPCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+    m_Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WEAPON"));
+}
+
+void ASurvivalProjectCPPCharacter::BeginPlay()
+{
+    Super::BeginPlay();
+
+    // Equip Weapon
+    AttachmentWeapon(9);
 }
 
 void ASurvivalProjectCPPCharacter::Tick(float DeltaSeconds)
@@ -336,6 +347,45 @@ int ASurvivalProjectCPPCharacter::GetNextEmptySlot()
     }
 
     return gb_nMaxInvenSlot;
+}
+
+void ASurvivalProjectCPPCharacter::AttachmentWeapon(int itemIndex)
+{
+    UMyGameInstance* game = dynamic_cast<UMyGameInstance*>(GetGameInstance());
+    if (!game) {
+        return;
+    }
+
+    ADataTableManager* pTableManager = game->GetDataTableManager();
+    if (!pTableManager) {
+        return;
+    }
+
+    FTD_Item& item = pTableManager->GetItemData(itemIndex);
+
+    if (m_Weapon) {
+        m_Weapon->SetStaticMesh(item.Mesh);
+    }
+
+    //< 소켓 찾아서 붙여야 하는데 안되서 에디터에서 붙여놨다.
+    //FName WeaponSocket(TEXT("hand_rSocket"));
+    //USkeletalMeshComponent* mesh = GetMesh();
+
+    //if (mesh && mesh->DoesSocketExist(WeaponSocket)) {
+    //    //static ConstructorHelpers::FObjectFinder<UStaticMesh> ST_WEAPON(TEXT("/Game/Assets/BG/LowPoly_Style/Meshes/CampTools/M_axe.M_axe"));
+
+    //    const USkeletalMeshSocket* socket = mesh->GetSocketByName(WeaponSocket);
+    //    if (socket) {
+    //        ALogManager::Log(FString::Printf(TEXT("[ACharacter]socket name : ")));
+    //    }
+
+    //    if (m_WeaponMesh) {
+    //        m_Weapon->SetStaticMesh(m_WeaponMesh);
+    //        ALogManager::Log(FString::Printf(TEXT("[ACharacter]Set Weapon StaticMesh : %s"), *m_WeaponMesh->GetName()));
+    //    }
+
+    //    m_Weapon->SetupAttachmentSocket(mesh, WeaponSocket);
+    //}
 }
 
 void ASurvivalProjectCPPCharacter::OnOffWidget(E_UI eUI)
