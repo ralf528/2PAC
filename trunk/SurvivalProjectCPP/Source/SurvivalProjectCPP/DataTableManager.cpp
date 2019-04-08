@@ -47,7 +47,7 @@ bool ADataTableManager::LoadDataTable()
 bool ADataTableManager::LoadItemTable()
 {
 	if (!m_ItemTable) {
-		UE_LOG(LogClass, Log, TEXT("[Log]Failed to load table : ItemTable"));
+        ALogManager::Log(FString::Printf(TEXT("[Log]Failed to load table : ItemTable")));
 		return false;
 	}
 
@@ -59,7 +59,7 @@ bool ADataTableManager::LoadItemTable()
 		FTD_Item* item = m_ItemTable->FindRow<FTD_Item>(name, ContextString);
 		if (item) {
 			m_mapItems.Add(i, *item);
-			UE_LOG(LogClass, Log, TEXT("[Log]Item : %d, %s"), item->Index, *item->Name.ToString());
+            ALogManager::Log(FString::Printf(TEXT("[Log]Item : %d, %s"), item->Index, *item->Name.ToString()));
 		}
 	}
 
@@ -69,7 +69,7 @@ bool ADataTableManager::LoadItemTable()
 bool ADataTableManager::LoadInteractionTable()
 {
     if (!m_InteractionTable) {
-        UE_LOG(LogClass, Log, TEXT("[Log]Failed to load table : ItemTable"));
+        ALogManager::Log(TEXT("[Log]Failed to load table : ItemTable"));
         return false;
     }
 
@@ -81,7 +81,6 @@ bool ADataTableManager::LoadInteractionTable()
         FTD_Interact* item = m_InteractionTable->FindRow<FTD_Interact>(name, ContextString);
         if (item) {
             m_mapInteractions.Add(i, *item);
-            //UE_LOG(LogClass, Log, TEXT("[Log]Item : %d, %s"), item->, *item->Name.ToString());
         }
     }
 
@@ -91,7 +90,7 @@ bool ADataTableManager::LoadInteractionTable()
 bool ADataTableManager::LoadCharacterTable()
 {
     if (!m_CharacterTable) {
-        UE_LOG(LogClass, Log, TEXT("[Log]Failed to load table : ItemTable"));
+        ALogManager::Log(TEXT("[Log]Failed to load table : ItemTable"));
         return false;
     }
 
@@ -113,7 +112,7 @@ bool ADataTableManager::LoadCharacterTable()
 bool ADataTableManager::LoadItemDropTable()
 {
     if (!m_ItemDropTable) {
-        UE_LOG(LogClass, Log, TEXT("[Log]Failed to load table : ItemDrop"));
+        ALogManager::Log(TEXT("[Log]Failed to load table : ItemDrop"));
         return false;
     }
 
@@ -134,12 +133,9 @@ bool ADataTableManager::LoadItemDropTable()
 // 아이템 테이블의 데이터를 반환
 FTD_Item& ADataTableManager::GetItemData(int index)
 {
-    FTD_Item tmp;
-    tmp.Index = 0;
     if (!m_ItemTable) {
-        //return nullptr;
-        UE_LOG(LogClass, Log, TEXT("[Log]ItemTable is nullptr"));
-        return tmp;
+        ALogManager::Log(TEXT("[Log]ItemTable is nullptr"));
+        return Item_Invalid;
     }
 
     FString ContextString;
@@ -151,19 +147,16 @@ FTD_Item& ADataTableManager::GetItemData(int index)
         return *row;
     }
 
-    //return nullptr;
-    UE_LOG(LogClass, Log, TEXT("[Log]failed to return ItemData[%d]"), index);
-    return tmp;
+    ALogManager::Log(TEXT("[Log]failed to return ItemData[%d]"));
+    return Item_Invalid;
 }
 
 // 아이템 조합 테이블 데이터 반환
 FTD_CombineItem& ADataTableManager::GetCombineItemData(int index)
 {
-    FTD_CombineItem tmp;
-
     if (!m_CombineItemTable) {
-        //return nullptr;
-        return tmp;
+        ALogManager::Log(TEXT("[Log]CombineItemTable is nullptr"));
+        return CombineItem_Invalid;
     }
 
     FString strIndex = FString::FromInt(index);
@@ -173,18 +166,15 @@ FTD_CombineItem& ADataTableManager::GetCombineItemData(int index)
         return *row;
     }
 
-    //return nullptr;
-    return tmp;
+    return CombineItem_Invalid;
 }
 
 // 인터렉션 테이블 데이터 반환
 FTD_Interact& ADataTableManager::GetInteractionData(int index)
 {
-    FTD_Interact tmp;
-
     if (!m_InteractionTable) {
-        UE_LOG(LogClass, Log, TEXT("[TableManager]Invalid InteractionTable"));
-        return tmp;
+        ALogManager::Log(TEXT("[TableManager]Invalid InteractionTable"));
+        return Interact_Invalid;
     }
 
     FString strIndex = FString::FromInt(index);
@@ -194,20 +184,17 @@ FTD_Interact& ADataTableManager::GetInteractionData(int index)
         return *row;
     }
 
-    UE_LOG(LogClass, Log, TEXT("[Log]Failed to Interaction Row[%d]"), index);
+    ALogManager::Log(TEXT("[Log]Failed to Interaction Row[%d]"));
 
-    //return nullptr;
-    return tmp;
+    return Interact_Invalid;
 }
 
 // 캐릭터 테이블 데이터 반환
 FTD_Character& ADataTableManager::GetCharacterData(int index)
 {
-    FTD_Character tmp;
-
     if (!m_CharacterTable) {
-        UE_LOG(LogClass, Log, TEXT("[TableManager]Invalid CharacterTable"));
-        return tmp;
+        ALogManager::Log(TEXT("[TableManager]Invalid CharacterTable"));
+        return Character_Invalid;
     }
 
     FString strIndex = FString::FromInt(index);
@@ -217,18 +204,15 @@ FTD_Character& ADataTableManager::GetCharacterData(int index)
         return *row;
     }
 
-    //return nullptr;
-    return tmp;
+    return Character_Invalid;
 }
 
 // 아이템 드랍 데이터 반환
 FTD_ItemDrop& ADataTableManager::GetItemDropData(int index)
 {
-    FTD_ItemDrop tmp;
-
     if (!m_ItemDropTable) {
-        UE_LOG(LogClass, Log, TEXT("[TableManager]Invalid ItemDropTable"));
-        return tmp;
+        ALogManager::Log(TEXT("[TableManager]Invalid ItemDropTable"));
+        return ItemDrop_Invalid;
     }
 
     FString strIndex = FString::FromInt(index);
@@ -237,20 +221,21 @@ FTD_ItemDrop& ADataTableManager::GetItemDropData(int index)
         return *row;
     }
 
-    return tmp;
+    return ItemDrop_Invalid;
 }
 
 // 드랍 아이템 정보
 int ADataTableManager::FindDropItem(int nGroupIndex)
 {
     for (auto &info : m_mapItemDrops) {
-        UE_LOG(LogClass, Log, TEXT("[TableManager]Find Drop Item [%d]"), info.Value.DropGroupIndex);
+        ALogManager::Log(FString::Printf(TEXT("[TableManager]Find Drop Item [%d]"), info.Value.DropGroupIndex));
+
         if (info.Value.DropGroupIndex == nGroupIndex)
         {
             return info.Value.DropItemIndex;
         }
     }
 
-    UE_LOG(LogClass, Log, TEXT("[TableManager]NotFound Drop Item [GroupIndex : %d]"), nGroupIndex);
+    ALogManager::Log(FString::Printf(TEXT("[TableManager]NotFound Drop Item [GroupIndex : %d]"), nGroupIndex));
     return 0;
 }

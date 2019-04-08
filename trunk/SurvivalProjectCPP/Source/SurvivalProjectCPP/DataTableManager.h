@@ -200,4 +200,11 @@ private:
     TMap<int, FTD_Interact> m_mapInteractions;
     TMap<int, FTD_Character> m_mapCharacters;
     TMap<int, FTD_ItemDrop> m_mapItemDrops;
+
+    // Invalid Data
+    FTD_Item Item_Invalid;
+    FTD_CombineItem CombineItem_Invalid;
+    FTD_Interact Interact_Invalid;
+    FTD_Character Character_Invalid;
+    FTD_ItemDrop ItemDrop_Invalid;
 };
