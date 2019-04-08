@@ -19,7 +19,7 @@ void ADataTableManager::BeginPlay()
 
 	Super::BeginPlay();
 
-	auto game = dynamic_cast<UMyGameInstance*>(GetGameInstance());
+    UMyGameInstance* game = Cast<UMyGameInstance>(GetGameInstance());
 	if (!game) {
 		return;
 	}

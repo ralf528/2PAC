@@ -21,6 +21,13 @@ public:
 
 	virtual void Init() override;
 
+    // 게임 데이터 Save & Load
+    UFUNCTION(BlueprintCallable)
+    bool LoadGameData();
+
+    UFUNCTION(BlueprintCallable)
+    bool SaveGameData();
+
 public:
 	// Table Manager
 	UFUNCTION(BlueprintCallable)
