@@ -14,7 +14,11 @@ struct FInvenItemInfo
 {
     GENERATED_BODY()
 public:
+
+    UPROPERTY()
     int itemType;
+
+    UPROPERTY()
     int amount;
 };
 

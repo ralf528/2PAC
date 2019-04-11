@@ -19,12 +19,11 @@ public:
     UGameSaver();
 
     UPROPERTY(VisibleAnywhere, Category = Basic)
-    TMap<int, int> Inventory;
+    TMap<int, FInvenItemInfo> Inventory;
 
     UPROPERTY(VisibleAnywhere, Category = Basic)
     FString SaveSlotName;
 
     UPROPERTY(VisibleAnywhere, Category = Basic)
     uint32 UserIndex;
-	
 };
