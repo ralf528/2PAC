@@ -22,6 +22,8 @@ public:
     int amount;
 };
 
+DECLARE_MULTICAST_DELEGATE(FOnHPChangedDelegate);
+
 UCLASS(Blueprintable)
 class ASurvivalProjectCPPCharacter : public ACharacter
 {
@@ -39,6 +41,8 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
     virtual void PostInitProperties() override;
+
+    virtual void PostInitializeComponents() override;
 
     /** Allows a Pawn to set up custom input bindings. Called upon possession by a PlayerController, using the InputComponent created by CreatePlayerInputComponent(). */
     virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
@@ -116,6 +120,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "QuickSlot")
 	bool SwapQuickSlot(const int src, const int dst);
 	
+    // hp ui 델리게이트
+    FOnHPChangedDelegate OnHPChanged;
+
+    float GetHPRatio() { return m_currentHP / 100.f; }
 
 private:
 	/** Top down camera */
@@ -144,4 +152,11 @@ private:
 
     UPROPERTY(EditAnywhere, Category = "MyUnit")
     int m_equipTool;
+
+    // hp 관련
+    UPROPERTY(VisibleAnywhere, Category = UI)
+    class UWidgetComponent* m_HeadUpHPBar;
+
+    UPROPERTY(Transient, VisibleInstanceOnly, Category = Stat, Meta = (AllowPrivateAceess = true))    // Transient : Serialization 에 포함되지 않음
+    float m_currentHP;
 };

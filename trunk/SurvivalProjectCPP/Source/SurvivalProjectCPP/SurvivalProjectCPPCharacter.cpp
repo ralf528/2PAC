@@ -16,11 +16,14 @@
 #include "Engine/World.h"
 #include "UserWidget.h"
 #include "DataTableManager.h"
+#include "Components/WidgetComponent.h"
+#include "ABCharacterWidget.h"
 
 const int gb_nMaxInvenSlot = 16;
 const int gb_nMaxQuickSlot = 8;
 
 ASurvivalProjectCPPCharacter::ASurvivalProjectCPPCharacter()
+    : m_currentHP(0.f)
 {
 	// Set size for player capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -65,6 +68,20 @@ ASurvivalProjectCPPCharacter::ASurvivalProjectCPPCharacter()
 	PrimaryActorTick.bStartWithTickEnabled = true;
 
     m_Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WEAPON"));
+
+    m_HeadUpHPBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HUBPBARWIDGET"));
+
+    m_HeadUpHPBar->SetupAttachment(GetMesh());
+
+    m_HeadUpHPBar->SetRelativeLocation(FVector(0.0f, 0.0f, 180.f));
+    m_HeadUpHPBar->SetWidgetSpace(EWidgetSpace::Screen);
+    static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUHPBAR(TEXT("WidgetBlueprint'/Game/Resources/UI/UI_HeadUpHPBar.UI_HeadUpHPBar_C'"));
+    //WidgetBlueprint'/Game/Resources/UI/UI_HeadUpHPBar.UI_HeadUpHPBar'
+    if (UI_HUHPBAR.Succeeded())
+    {
+        m_HeadUpHPBar->SetWidgetClass(UI_HUHPBAR.Class);
+        m_HeadUpHPBar->SetDrawSize(FVector2D(150.f, 50.f));
+    }
 }
 
 void ASurvivalProjectCPPCharacter::BeginPlay()
@@ -141,6 +158,17 @@ void ASurvivalProjectCPPCharacter::PostInitProperties()
     m_QuickSlot.Add(0);
 }
 
+void ASurvivalProjectCPPCharacter::PostInitializeComponents()
+{
+    Super::PostInitializeComponents();
+
+    auto CharacterWidget = Cast<UABCharacterWidget>(m_HeadUpHPBar->GetUserWidgetObject());
+    if (nullptr != CharacterWidget)
+    {
+        CharacterWidget->BindCharacter(this);
+    }
+}
+
 void ASurvivalProjectCPPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -204,7 +232,11 @@ bool ASurvivalProjectCPPCharacter::UseItemForIndex(const int index)
 		return false;
 	}
 
+    m_currentHP += 10.f;
+    OnHPChanged.Broadcast();
+
 	int value = DeleteItem(index);
+
 	ALogManager::Log(FString::Printf(TEXT("[Log]UseItem index : %d, count : %d"), index, value));
 
 	return true;
